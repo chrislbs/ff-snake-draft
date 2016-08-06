@@ -1,0 +1,13 @@
+# ignore intellij
+.idea/
+*.iml
+
+# grunt files
+.grunt
+
+# dependency directories
+node_modules
+
+# npm cache directory
+.npm
+
