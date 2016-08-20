@@ -1,14 +1,22 @@
-const http = require('http');
+const express = require('express');
+const app = express();
 const port = 8080;
 
-function requestHandler(req, res) {
-    console.log(req.url);
-    res.end('Hello World')
-}
+app.get('/', (request, response) => {
+    response.send('Hello from Express!');
+});
 
-const server = http.createServer(requestHandler);
+app.use((request, response, next) => {
+    console.log(request.headers);
+    next()
+});
 
-server.listen(port, (err) => {
+app.use((err, request, response, next) => {
+    console.log(err);
+    response.status(500).send('Something broke!')
+});
+
+app.listen(port, (err) => {
     if (err) {
         return console.log('something bad happened', err)
     }
