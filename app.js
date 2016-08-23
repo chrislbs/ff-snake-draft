@@ -1,20 +1,31 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const data = require('./libs/data');
-const players = require('./libs/data/players');
-const app = express();
-const port = 8080;
+'use strict';
+
+var express = require('express'),
+    bodyParser = require('body-parser'),
+    data = require('./libs/data'),
+    players = require('./libs/data/players'),
+    swig = require('swig'),
+    app = express(),
+    port = 8080;
 
 app.use((request, response, next) => {
     //console.log(request.headers);
-    next()
+    next();
 });
 
+// Body parsing middleware
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true, limit: '50mb'}));
 
-app.get('/', (request, response) => {
-    response.send('Hello from Express!');
-});
+// Swig Templating Setup
+app.engine('html', swig.renderFile);
+app.set('view engine', 'html');
+app.set('views', __dirname + '/views');
+app.set('view cache', false);
+swig.setDefaults({cache: false});
+
+// Setup static file server for images, html, css/fonts, and js
+app.use('/public', express.static('public'));
 
 app.get('/users', function(request, response) {
 
@@ -23,7 +34,7 @@ app.get('/users', function(request, response) {
             response.send(users);
         })
         .catch(function(err) {
-            console.log(err)
+            console.log(err);
             response.status(500).send(err);
         });
 });
@@ -34,11 +45,11 @@ app.post('/users', function(request, response) {
     console.log(user);
     data.createUser(user)
         .then(function() {
-            console.log(arguments)
+            console.log(arguments);
             response.send(`${user.username} created`);
         })
         .catch(function(err) {
-            console.log(err)
+            console.log(err);
             response.status(500).send(err);
         });
 });
@@ -67,31 +78,36 @@ app.get('/players', function(request, response) {
 app.get('/players/:id', function(request, response) {
     players.findPlayer(request.params.id)
         .then((player) => {
-            if (player == null) {
+            if (player === null) {
                 response.status(404).send();
             }
             else {
                 response.send(player);
             }
         })
-        .catch((err) => response.status(500).send(err))
+        .catch((err) => response.status(500).send(err));
 });
 
 app.delete('/players/:id', function(request, response) {
     players.deletePlayer(request.params.id)
         .then(() => response.status(204).send())
-        .catch((err) => response.status(500).send(err))
+        .catch((err) => response.status(500).send(err));
 });
 
-app.use((err, request, response, next) => {
+// Default route if no match was found for the url
+app.all('/*', function (req, res) {
+    res.render('base', {});
+});
+
+app.use((err, request, response) => {
     console.log(err);
-    response.status(500).send('Something broke!')
+    response.status(500).send('Something broke!');
 });
 
 app.listen(port, (err) => {
     if (err) {
-        return console.log('something bad happened', err)
+        return console.log('something bad happened', err);
     }
 
-    console.log(`server is listening on ${port}`)
+    console.log(`server is listening on ${port}`);
 });
