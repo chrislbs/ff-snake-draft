@@ -1,12 +1,13 @@
-const mysql = require('promise-mysql');
+'use strict';
+
 const Promise = require('bluebird');
 const db = require('./data/db');
 
-const DEBUG = true;
+const DEBUG = false;
 
 function log() {
     if (DEBUG) {
-        console.log.apply(this, arguments);
+        console.log.apply(window, arguments);
     }
 }
 
@@ -51,8 +52,8 @@ function getUsers() {
 function createUser(userObj) {
     return Promise.using(db.getConnection(), createUserTable)
         .then(function(connection) {
-            connection.query('INSERT INTO users SET ?', userObj)
-        })
+            connection.query('INSERT INTO users SET ?', userObj);
+        });
 }
 
 module.exports.getUsers = getUsers;
