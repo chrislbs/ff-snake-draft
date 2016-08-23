@@ -42,13 +42,13 @@ class App extends Component {
     }
 
     render() {
-        const { pathname, url_query, debug } = this.props;
+        const { pathname, url_query, debug, children } = this.props;
 
         let nav = <Nav url_query={url_query} />;
 
         const loadingSpinner = <img src="/public/img/spinner.gif" className="loading-spinner" alt="Loading..." />;
 
-        const contentWrapperClasses = classNames(['main-content-gutter container-fluid'], {'loading-wrapper': user === null});
+        const contentWrapperClasses = classNames(['main-content-gutter container-fluid'], {'loading-wrapper': false});
 
         const appWrapperClasses = classNames(['app-wrapper'], {'error': false});
 

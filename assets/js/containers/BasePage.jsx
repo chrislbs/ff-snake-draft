@@ -45,4 +45,7 @@ export default class BasePage extends Component {
             this.fetchData(...last_fetch);
         }
     }
+
+    componentDidUpdate(prevProps, prevState) {
+    }
 }
