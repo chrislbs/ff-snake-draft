@@ -44,7 +44,7 @@ class App extends Component {
     render() {
         const { pathname, url_query, debug } = this.props;
 
-        let nav = user ? <Nav url_query={url_query} /> : '';
+        let nav = <Nav url_query={url_query} />;
 
         const loadingSpinner = <img src="/public/img/spinner.gif" className="loading-spinner" alt="Loading..." />;
 
