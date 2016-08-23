@@ -1,0 +1,241 @@
+@import "variables";
+@import "bootstrap";
+@import "mixins";
+
+html, body {
+    height: 100%;
+    width: 100%;
+    background: $off-white;
+}
+
+body {
+    /* Fix for outline around elements when they are active */
+    *:active {
+        outline: none;
+    }
+
+    a {
+        color: $gray-dark;
+        text-decoration: none;
+
+        &:hover {
+            color: $gray-dark;
+            text-decoration: none;
+        }
+
+        &:active {
+            color: $gray-dark;
+            text-decoration: none;
+        }
+
+        &:focus {
+            outline: none;
+            color: $gray-dark;
+            text-decoration: none;
+        }
+    }
+}
+
+// Reset to make drop downs appear on hover
+.dropdown:hover > .dropdown-menu {
+    display: block;
+}
+
+.dropdown-menu {
+    @include transition(all 2s linear);
+
+    &.right {
+        top: 15px;
+        left: 88%;
+
+        li {
+            .dropdown-menu.right {
+                top: -4px;
+                left: 99%;
+            }
+        }
+        .caret {
+            position: absolute;
+            right: 10%;
+            top: 48%;
+            transform: rotate(-90deg);
+        }
+    }
+}
+
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus {
+    text-decoration: none;
+    color: $white;
+    background-color: $data-blue !important;
+    background-image: none !important;
+}
+
+.row {
+    &.no-gutter {
+        margin-left: 0;
+        margin-right: 0;
+
+        [class*="col-"] {
+            &:not(:first-child), &:not(:last-child) {
+                padding-right: 0;
+                padding-left: 0;
+            }
+        }
+    }
+}
+
+.loading-wrapper {
+    .loading-spinner {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        margin-left: -54px;
+        margin-top: -54px;
+        width: 108px;
+        height: 108px;
+        z-index: 9000;
+    }
+}
+
+.page-wrapper {
+    position: relative;
+
+    .loading-fade-wrapper {
+        position: relative;
+        background: $off-white;
+
+        &.loading {
+            @include opacity(0.5);
+        }
+    }
+
+    .loading-spinner {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        width: 108px;
+        height: 108px;
+        margin-left: -54px;
+        margin-top: -54px;
+        z-index: 2;
+    }
+}
+
+.table {
+    background: $white;
+}
+
+.navbar {
+    margin-bottom: 0;
+}
+
+#react-root {
+    height: 100%;
+    width: 100%;
+}
+
+.app-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+
+    > .alert-backdrop {
+        position: fixed;
+        z-index: 9999;
+        width: 100%;
+        height: 100%;
+        background: $modal-backdrop-bg;
+        @include opacity(0.5);
+    }
+
+    > .app-alert {
+        position: fixed;
+        z-index: 9999;
+        top: 50%;
+        left: 50%;
+        width: 30%;
+        min-width: 450px;
+        padding-bottom: 48px;
+
+        .close {
+            position: absolute;
+            top: 13px;
+            right: 13px;
+
+            &:active {
+                top: 14px;
+                right: 12px;
+            }
+        }
+
+        h3 {
+            margin: 0;
+
+            .glyphicon {
+                vertical-align: top;
+                margin-right: 10px;
+            }
+        }
+
+        .error-report-form {
+            margin-top: 15px;
+
+            textarea {
+                width: 100%;
+                height: 150px;
+            }
+        }
+
+        .actions {
+            position: absolute;
+            bottom: 15px;
+            left: 0;
+            width: 100%;
+            padding: 0 15px;
+            height: 33px;
+
+            .left {
+                float: left;
+                margin-right: 10px;
+            }
+
+            .right {
+                float: right;
+                margin-left: 10px;
+            }
+        }
+    }
+
+    &.error {
+        .content-wrapper {
+            pointer-events: none;
+        }
+    }
+}
+
+.content-wrapper {
+    display: table;
+    table-layout: fixed;
+    height: 100%;
+    width: 100%;
+}
+
+.main-content {
+    width: 100%;
+    height: 100%;
+
+    .main-content-gutter {
+        margin: 102px auto 0 auto;
+
+        @media (min-width: $custom-screen-s) {
+            margin: 112px auto 0 auto;
+        }
+
+        @media (min-width: $custom-screen-l) {
+            margin: 119px auto 0 auto;
+        }
+    }
+}
+
+@import "nav";
