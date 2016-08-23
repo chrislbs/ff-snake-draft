@@ -1,0 +1,37 @@
+FROM ubuntu:14.04
+MAINTAINER Chris Pounds <Chrislbs@gmail.com>
+
+ENV DEBIAN_FRONTEND noninteractive
+
+# Install curl and other dependencies for our node app
+RUN apt-get update && apt-get install -y \
+    python-software-properties \
+    curl \
+    gcc
+
+# Get the node PPA
+RUN curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+
+# Install node
+RUN apt-get update && apt-get install -y nodejs
+
+# Install global node packages
+RUN npm install -g nodemon bower forever
+
+# Cleanup
+RUN apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
+    apt-get autoremove -y
+
+ADD ./ /app
+
+EXPOSE 80
+EXPOSE 8080
+
+WORKDIR /app
+
+ENV NODE_PATH /app:$NODE_PATH
+
+VOLUME ["/app"]
+
+CMD ["/usr/bin/nodemon", "app.js"]
