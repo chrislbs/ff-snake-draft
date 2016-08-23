@@ -1,16 +1,27 @@
 'use strict';
 
 var express = require('express'),
+    path = require('path'),
+    _ = require('lodash'),
     bodyParser = require('body-parser'),
-    data = require('./libs/data'),
-    players = require('./libs/data/players'),
     swig = require('swig'),
+    utils = require('utils'),
     app = express(),
+    apiRouter = express.Router(),
     port = 8080;
 
 app.use((request, response, next) => {
     //console.log(request.headers);
     next();
+});
+
+app.set('rootPath', __dirname);
+
+// Global Paths
+app.set('paths', {
+    middleware: path.join(app.get('rootPath'), 'middleware'),
+    routes: path.join(app.get('rootPath'), 'routes'),
+    views: path.join(app.get('rootPath'), 'views')
 });
 
 // Body parsing middleware
@@ -27,71 +38,21 @@ swig.setDefaults({cache: false});
 // Setup static file server for images, html, css/fonts, and js
 app.use('/public', express.static('public'));
 
-app.get('/users', function(request, response) {
-
-    data.getUsers()
-        .then(function(users) {
-            response.status(200).json(users);
-        })
-        .catch(function(err) {
-            console.log('Error getting users: ', err);
-            response.status(500).json({'error': err});
-        });
+/* Use getModulesInDirectory(path, [ignore_prefixes...], module_callback) to import all of the
+ * middleware and routes.
+ */
+// Middleware
+_.each(utils.getModulesInDirectory(app.get('paths').middleware, ['_', '.']), function (middleware) {
+    require(middleware)(app, apiRouter);
 });
 
-app.post('/users', function(request, response) {
-
-    const user = request.body;
-    //console.log(user);
-    data.createUser(user)
-        .then(function() {
-            response.status(200).json({'message': `${user.username} created`});
-        })
-        .catch(function(err) {
-            console.log('Error creating user: ', err);
-            response.status(500).json({'error': err});
-        });
+// Routes
+_.each(utils.getModulesInDirectory(app.get('paths').routes, ['_', '.']), function (route) {
+    require(route)(app, apiRouter);
 });
 
-app.post('/players', function(request, response) {
-
-    const player = request.body;
-    //console.log(player);
-    players.createPlayer(player)
-        .then((playerId) => {
-            player.id = playerId;
-            response.status(200).json(player);
-        })
-        .catch((err) => response.status(500).json({'error': err}));
-});
-
-app.get('/players', function(request, response) {
-
-    players.getAllPlayers()
-        .then((players) => {
-            response.status(200).json(players);
-        })
-        .catch((err) => response.status(500).json({'error': err}));
-});
-
-app.get('/players/:id', function(request, response) {
-    players.findPlayer(request.params.id)
-        .then((player) => {
-            if (player === null) {
-                response.status(404).json({'message': `Unable to locate player with id: ${request.params.id}`});
-            }
-            else {
-                response.status(200).json(player);
-            }
-        })
-        .catch((err) => response.status(500).json({'error': err}));
-});
-
-app.delete('/players/:id', function(request, response) {
-    players.deletePlayer(request.params.id)
-        .then(() => response.status(204).json({'message': `Successfully deleted player with id: ${request.params.id}`}))
-        .catch((err) => response.status(500).json({'error': err}));
-});
+// Setup the api router with a url prefixed by a version #
+app.use('/api/v1', apiRouter);
 
 // Default route if no match was found for the url
 app.all('/*', function (req, res) {
