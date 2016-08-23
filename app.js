@@ -54,7 +54,7 @@ _.each(utils.getModulesInDirectory(app.get('paths').routes, ['_', '.']), functio
 // Setup the api router with a url prefixed by a version #
 app.use('/api/v1', apiRouter);
 
-// Default route if no match was found for the url
+// Default route if no match was found for the url just returns the rendered base.html
 app.all('/*', function (req, res) {
     res.render('base', {});
 });
