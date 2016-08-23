@@ -55,10 +55,7 @@ export function deletePlayer(id) {
         [CALL_API]: {
             endpoint: `/players/${id}/`,
             types: [DELETE_PLAYER, DELETE_PLAYER_SUCCESS, DELETE_PLAYER_FAILURE],
-            method: 'DELETE',
-            data: {
-                id
-            }
+            method: 'DELETE'
         }
     };
 };

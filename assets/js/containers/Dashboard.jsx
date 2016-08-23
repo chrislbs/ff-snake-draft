@@ -5,7 +5,14 @@ import BasePage from './BasePage';
 import { List } from 'immutable';
 import PathSection from './PathSection';
 import { connect } from 'react-redux';
-import { getAllUsers, getAllPlayers, deletePlayer, deleteUser } from '../actions';
+import {
+    getAllUsers,
+    createUser,
+    deleteUser,
+    getAllPlayers,
+    createPlayer,
+    deletePlayer
+} from '../actions';
 import classNames from 'classnames';
 import { PlayerList } from '../components/players';
 import { UserList } from '../components/users';
@@ -28,10 +35,22 @@ class Dashboard extends BasePage {
         getAllUsers();
     };
 
+    handleCreatePlayer = (name, birthday) => {
+        const { createPlayer } = this.props;
+
+        createPlayer(name, birthday);
+    };
+
     handleDeletePlayer = (id) => {
         const { deletePlayer } = this.props;
 
         deletePlayer(id);
+    };
+
+    handleCreateUser = (username, age) => {
+        const { createUser } = this.props;
+
+        createUser(username, age);
     };
 
     handleDeleteUser = (id) => {
@@ -54,10 +73,20 @@ class Dashboard extends BasePage {
                     <div className={loadingWrapperClasses}>
                         <div className="col-xs-12 page-title">
                             {/* List all of the players and tools for creating/deleting them. */}
-                            <PlayerList players={players} onDeletePlayer={this.handleDeletePlayer.bind(this)} />
+                            <PlayerList
+                                players={players}
+                                onCreatePlayer={this.handleCreatePlayer}
+                                onDeletePlayer={this.handleDeletePlayer}
+                            />
+
+                            <br />
 
                             {/* List all of the users and tools for creating/deleting them. */}
-                            <UserList users={users} onDeleteUser={this.handleDeleteUser.bind(this)} />
+                            <UserList
+                                users={users}
+                                onCreateUser={this.handleCreateUser}
+                                onDeleteUser={this.handleDeleteUser}
+                            />
                         </div>
                     </div>
                     {loadingSpinner}
@@ -76,5 +105,5 @@ export default connect(
             users: state.users.get('all')
         };
     },
-    { getAllPlayers, getAllUsers, deletePlayer, deleteUser }
+    { getAllPlayers, createPlayer, deletePlayer, getAllUsers, createUser, deleteUser }
 )(Dashboard);

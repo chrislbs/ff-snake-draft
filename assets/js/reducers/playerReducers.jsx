@@ -62,7 +62,7 @@ export function players(
             return state.set('fetching', true);
 
         case ActionTypes.DELETE_PLAYER_SUCCESS:
-            const idx = state.get('all').findIndex(p => p.get('id') === action.id);
+            const idx = state.get('all').findIndex(p => p.get('id') === action.response.id);
 
             // If the deleted player is in the list of all players, remove him/her. Otherwise just turn off the
             // fetching flag

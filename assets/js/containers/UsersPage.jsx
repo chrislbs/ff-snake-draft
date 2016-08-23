@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import BasePage from './BasePage';
 import { List } from 'immutable';
 import { connect } from 'react-redux';
-import { getAllUsers, deleteUser } from '../actions';
+import { getAllUsers, createUser, deleteUser } from '../actions';
 import { UserList } from '../components/users';
 import classNames from 'classnames';
 
@@ -25,6 +25,12 @@ class UsersPage extends BasePage {
         getAllUsers();
     };
 
+    handleCreateUser = (username, age) => {
+        const { createUser } = this.props;
+
+        createUser(username, age);
+    };
+
     handleDeleteUser = (id) => {
         const { deleteUser } = this.props;
 
@@ -42,7 +48,11 @@ class UsersPage extends BasePage {
             <div className="page-wrapper users-page-wrapper row">
                 <div className={loadingWrapperClasses}>
                     <div className="col-xs-12 page-title">
-                        <UserList users={users} onDeleteUser={this.handleDeleteUser.bind(this)} />
+                        <UserList
+                            users={users}
+                            onCreateUser={this.handleCreateUser}
+                            onDeleteUser={this.handleDeleteUser}
+                        />
                     </div>
                 </div>
                 {loadingSpinner}
@@ -59,5 +69,5 @@ export default connect(
             users: state.users.get('all')
         };
     },
-    { getAllUsers, deleteUser }
+    { getAllUsers, createUser, deleteUser }
 )(UsersPage);

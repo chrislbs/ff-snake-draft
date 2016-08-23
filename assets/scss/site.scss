@@ -231,14 +231,27 @@ body {
 }
 
 .db-list-wrapper {
-    margin-top: 50px;
+    display: inline-block;
+    margin-top: 125px;
 
     &:first-child {
         margin-top: 0;
     }
 
+    h1 {
+        display: inline-block;
+        float: left;
+        margin-top: 0;
+    }
+
+    .create.btn {
+        float: right;
+        margin-top: 5px;
+    }
+
     .db-list {
         display: inline-block;
+        clear: both;
         list-style-type: none;
         padding: 0;
 

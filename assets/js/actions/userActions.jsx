@@ -55,10 +55,7 @@ export function deleteUser(id) {
         [CALL_API]: {
             endpoint: `/users/${id}/`,
             types: [DELETE_USER, DELETE_USER_SUCCESS, DELETE_USER_FAILURE],
-            method: 'DELETE',
-            data: {
-                id
-            }
+            method: 'DELETE'
         }
     };
 };

@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import BasePage from './BasePage';
 import { List } from 'immutable';
 import { connect } from 'react-redux';
-import { getAllPlayers, deletePlayer } from '../actions';
+import { getAllPlayers, createPlayer, deletePlayer } from '../actions';
 import { PlayerList } from '../components/players';
 import classNames from 'classnames';
 
@@ -25,6 +25,12 @@ class PlayersPage extends BasePage {
         getAllPlayers();
     };
 
+    handleCreatePlayer = (name, birthday) => {
+        const { createPlayer } = this.props;
+
+        createPlayer(name, birthday);
+    };
+
     handleDeletePlayer = (id) => {
         const { deletePlayer } = this.props;
 
@@ -42,7 +48,11 @@ class PlayersPage extends BasePage {
             <div className="page-wrapper players-page-wrapper row">
                 <div className={loadingWrapperClasses}>
                     <div className="col-xs-12 page-title">
-                        <PlayerList players={players} onDeletePlayer={this.handleDeletePlayer.bind(this)} />
+                        <PlayerList
+                            players={players}
+                            onCreatePlayer={this.handleCreatePlayer}
+                            onDeletePlayer={this.handleDeletePlayer}
+                        />
                     </div>
                 </div>
                 {loadingSpinner}
@@ -59,5 +69,5 @@ export default connect(
             players: state.players.get('all')
         };
     },
-    { getAllPlayers, deletePlayer }
+    { getAllPlayers, createPlayer, deletePlayer }
 )(PlayersPage);

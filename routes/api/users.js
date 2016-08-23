@@ -1,31 +1,45 @@
 'use strict';
 
-var data = require('libs/data');
+var users = require('libs/data/users');
 
 module.exports = function(app, apiRouter) {
     apiRouter.get('/users/?', function(request, response) {
 
-        data.getUsers()
+        users.getAllUsers()
             .then(function(users) {
                 response.status(200).json(users);
             })
-            .catch(function(err) {
-                console.log('Error getting users: ', err);
-                response.status(500).json({'error': err});
-            });
+            .catch((err) => response.status(500).json({'error': err}));
     });
 
     apiRouter.post('/users/?', function(request, response) {
 
         const user = request.body;
         //console.log(user);
-        data.createUser(user)
-            .then(function() {
-                response.status(200).json({'message': `${user.username} created`});
+        users.createUser(user)
+            .then((userId) => {
+                user.id = userId;
+                response.status(200).json(user);
             })
-            .catch(function(err) {
-                console.log('Error creating user: ', err);
-                response.status(500).json({'error': err});
-            });
+            .catch((err) => response.status(500).json({'error': err}));
+    });
+
+    apiRouter.get('/users/:id/?', function(request, response) {
+        users.findUser(request.params.id)
+            .then((user) => {
+                if (user === null) {
+                    response.status(404).json({'message': `Unable to locate user with id: ${request.params.id}`});
+                }
+                else {
+                    response.status(200).json(user);
+                }
+            })
+            .catch((err) => response.status(500).json({'error': err}));
+    });
+
+    apiRouter.delete('/users/:id/?', function(request, response) {
+        users.deleteUser(parseInt(request.params.id))
+            .then(() => response.status(200).json({'id': parseInt(request.params.id), 'message': `Successfully deleted user with id: ${request.params.id}`}))
+            .catch((err) => response.status(500).json({'error': err}));
     });
 };

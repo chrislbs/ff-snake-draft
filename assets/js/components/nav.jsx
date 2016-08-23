@@ -29,6 +29,13 @@ export class Nav extends Component {
         return (
             <nav className="app-nav" role="navigation">
                 <ul className="nav">
+                    {/* Home button */}
+                    <li>
+                        <Link to={{pathname: "/", query: nav_query}}>
+                            <span className="glyphicon glyphicon-home"></span><br /><span className="nav-label">Dashboard</span>
+                        </Link>
+                    </li>
+
                     {/* Players nav menu */}
                     <li className="dropdown">
                         <Link to={{pathname: "/players/", query: nav_query}} activeClassName="active" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" id="dm1">

@@ -38,8 +38,8 @@ module.exports = function(app, apiRouter) {
     });
 
     apiRouter.delete('/players/:id/?', function(request, response) {
-        players.deletePlayer(request.params.id)
-            .then(() => response.status(204).json({'message': `Successfully deleted player with id: ${request.params.id}`}))
+        players.deletePlayer(parseInt(request.params.id))
+            .then(() => response.status(200).json({'id': parseInt(request.params.id), 'message': `Successfully deleted player with id: ${request.params.id}`}))
             .catch((err) => response.status(500).json({'error': err}));
     });
 };

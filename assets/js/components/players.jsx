@@ -16,13 +16,30 @@ export class PlayerList extends Component {
                 'birthday': PropTypes.string
             })
         ),
+        'onCreatePlayer': PropTypes.func.isRequired,
         'onDeletePlayer': PropTypes.func.isRequired
     };
     // }}}
 
+    state = {
+        'creating': false
+    };
+
     constructor(props) {
         super(props);
     }
+
+    handleCreatePlayer = (name, birthday) => {
+        const { onCreatePlayer } = this.props;
+
+        onCreatePlayer(name, birthday);
+
+        this.setState({'creating': false});
+    };
+
+    handleCancelCreate = () => {
+        this.setState({'creating': false});
+    };
 
     handleDeletePlayer = (player) => {
         const { onDeletePlayer } = this.props;
@@ -30,20 +47,38 @@ export class PlayerList extends Component {
         onDeletePlayer(player.get('id'));
     };
 
+    openCreateForm = () => {
+        this.setState({'creating': true});
+    };
+
     render() {
         const { players } = this.props;
+        const { creating } = this.state;
 
         return (
             <div className="db-list-wrapper">
-                <h1>Players</h1> 
+                <div>
+                    <h1>Players</h1> 
+                    <button className="create btn btn-default" onClick={this.openCreateForm}>Add</button>
+                    <div className="clearfix" />
+                </div>
+
                 <ul className="db-list">
                     {/* Column Headers */}
-                    <li key={-1} className="db-list-headers">
-                        <div className="val id"><label>ID</label></div>
-                        <div className="val name"><label>Name</label></div>
-                        <div className="val birthday"><label>Birthday</label></div>
+                    <li key={'headers'} className="db-list-headers">
+                        <div className="id"><label>ID</label></div>
+                        <div className="name"><label>Name</label></div>
+                        <div className="birthday"><label>Birthday</label></div>
                         <div className="actions"><label>Actions</label></div>
                     </li>
+
+                    {/* Create player form - Only shown when the "creating" state is true */}
+                    {creating ?
+                        <PlayerListForm
+                            key={'form'}
+                            onCreatePlayer={this.handleCreatePlayer}
+                            onCancelCreate={this.handleCancelCreate}
+                        /> : null}
 
                     {/* Player list items */}
                     {players ?
@@ -58,7 +93,107 @@ export class PlayerList extends Component {
     }
 }
 
-export class PlayerListItem extends Component {
+class PlayerListForm extends Component {
+    // {{{ PropTypes
+    static propTypes = {
+        'onCreatePlayer': PropTypes.func.isRequired,
+        'onCancelCreate': PropTypes.func.isRequired
+    };
+    // }}}
+
+    state = {
+        'name': '',
+        'birthday': ''
+    };
+
+    constructor(props) {
+        super(props);
+    }
+
+    handleChangeName = (e) => {
+        this.setState({'name': e.target.value});
+    };
+
+    handleChangeBirthday = (e) => {
+        this.setState({'birthday': e.target.value});
+    };
+
+    handleCreatePlayer = () => {
+        const { onCreatePlayer } = this.props;
+        const { name, birthday } = this.state;
+
+        onCreatePlayer(name, birthday);
+    };
+
+    handleCancelCreate = () => {
+        const { onCancelCreate } = this.props;
+
+        // Reset the form fields
+        this.setState({'name': '', 'birthday': ''});
+
+        onCancelCreate();
+    };
+
+    handleKeyDown = (e) => {
+        const { onCreatePlayer, onCancelCreate } = this.props;
+        const { name, birthday } = this.state;
+
+        switch(e.keyCode) {
+            // enter
+            case 13:
+                onCreatePlayer(name, birthday);
+                break;
+            // esc
+            case 27:
+                // Reset the form fields
+                this.setState({'name': '', 'birthday': ''});
+
+                onCancelCreate();
+                break;
+            default:
+                break;
+        }
+    };
+
+    focusOnInput = (el) => {
+        el && el.focus();
+    };
+
+    render() {
+        const { name, birthday } = this.state;
+
+        return (
+            <li className="db-list-form">
+                <div className="id">---</div>
+                <div className="name">
+                    <input
+                        type="text"
+                        ref={this.focusOnInput}
+                        value={name}
+                        onChange={this.handleChangeName}
+                        onKeyDown={this.handleKeyDown}
+                        placeholder="Player's Name..."
+                    />
+                </div>
+                <div className="birthday">
+                    <input
+                        type="text"
+                        value={birthday}
+                        onChange={this.handleChangeBirthday}
+                        onKeyDown={this.handleKeyDown}
+                        placeholder="Player's Birthday..."
+                    />
+                </div>
+                <div className="actions">
+                    <button className="btn btn-success" onClick={this.handleCreatePlayer.bind(this)}>Create</button>
+                    <button className="btn btn-warning" onClick={this.handleCancelCreate.bind(this)}>Cancel</button>
+                </div>
+            </li>
+        );
+    }
+}
+
+class PlayerListItem extends Component {
     // {{{ PropTypes
     static propTypes = {
         'player': ImmutablePropTypes.contains({
@@ -85,9 +220,9 @@ export class PlayerListItem extends Component {
 
         return (
             <li className="db-list-item">
-                <div className="val id">{player.get('id')}</div>
-                <div className="val name">{player.get('name')}</div>
-                <div className="val birthday">{moment(player.get('birthday')).format('MMM. Do, YYYY')}</div>
+                <div className="id">{player.get('id')}</div>
+                <div className="name">{player.get('name')}</div>
+                <div className="birthday">{moment(player.get('birthday')).format('MMM. Do, YYYY')}</div>
                 <div className="actions">
                     <Link to={{pathname: `/players/${player.get('id')}/`}} className="btn btn-default" role="button">View Profile</Link>
                     <button className="btn btn-danger" role="button" onClick={this.handleDelete.bind(this)}>Delete</button>

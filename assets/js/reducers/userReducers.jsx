@@ -43,6 +43,40 @@ export function users(
                 error: action.error
             });
 
+        // GET_USER Methods
+        case ActionTypes.GET_USER:
+            return state.set('fetching', true);
+
+        case ActionTypes.GET_USER_SUCCESS:
+            return state.set('fetching', false)
+                .set('active', fromJS(action.response));
+
+        case ActionTypes.GET_USER_FAILURE:
+            return state.merge({
+                fetching: false,
+                error: action.error
+            });
+
+        // DELETE_USER Methods
+        case ActionTypes.DELETE_USER:
+            return state.set('fetching', true);
+
+        case ActionTypes.DELETE_USER_SUCCESS:
+            console.log('action: ', action);
+            const idx = state.get('all').findIndex(p => p.get('id') === action.response.id);
+
+            // If the deleted user is in the list of all users, remove him/her. Otherwise just turn off the
+            // fetching flag
+            return idx === -1 ?
+                state.set('fetching', false)
+                    : state.set('fetching', false).deleteIn(['all', idx]);
+
+        case ActionTypes.DELETE_USER_FAILURE:
+            return state.merge({
+                fetching: false,
+                error: action.error
+            });
+
         default:
             return state;
     }
