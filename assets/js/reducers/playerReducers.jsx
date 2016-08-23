@@ -9,6 +9,8 @@ import * as ActionTypes from '../actions';
 export function players(
     state = fromJS({
         fetching: false,
+        creating: false,
+        deleting: false,
         all: []
     }),
     action
@@ -30,16 +32,16 @@ export function players(
 
         // CREATE_PLAYER Methods
         case ActionTypes.CREATE_PLAYER:
-            return state.set('fetching', true);
+            return state.set('creating', true);
 
         case ActionTypes.CREATE_PLAYER_SUCCESS:
             // Add the new player to the list of all players
-            return state.set('fetching', false)
+            return state.set('creating', false)
                 .update('all', all => all.push(fromJS(action.response)));
 
         case ActionTypes.CREATE_PLAYER_FAILURE:
             return state.merge({
-                fetching: false,
+                creating: false,
                 error: action.error
             });
 
@@ -59,7 +61,7 @@ export function players(
 
         // DELETE_PLAYER Methods
         case ActionTypes.DELETE_PLAYER:
-            return state.set('fetching', true);
+            return state.set('deleting', true);
 
         case ActionTypes.DELETE_PLAYER_SUCCESS:
             const idx = state.get('all').findIndex(p => p.get('id') === action.response.id);
@@ -67,12 +69,12 @@ export function players(
             // If the deleted player is in the list of all players, remove him/her. Otherwise just turn off the
             // fetching flag
             return idx === -1 ?
-                state.set('fetching', false)
-                    : state.set('fetching', false).deleteIn(['all', idx]);
+                state.set('deleting', false)
+                    : state.set('deleting', false).deleteIn(['all', idx]);
 
         case ActionTypes.DELETE_PLAYER_FAILURE:
             return state.merge({
-                fetching: false,
+                deleting: false,
                 error: action.error
             });
 

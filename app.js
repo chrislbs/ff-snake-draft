@@ -8,7 +8,8 @@ var express = require('express'),
     utils = require('utils'),
     app = express(),
     apiRouter = express.Router(),
-    port = 8080;
+    port = 8080,
+    server;
 
 app.use((request, response, next) => {
     //console.log(request.headers);
@@ -23,6 +24,11 @@ app.set('paths', {
     routes: path.join(app.get('rootPath'), 'routes'),
     views: path.join(app.get('rootPath'), 'views')
 });
+
+// Start listening to the port
+server = app.listen(port);
+console.log('listening to port: ', port);
+server.timeout = 300000;
 
 // Body parsing middleware
 app.use(bodyParser.json());
@@ -60,14 +66,6 @@ app.all('/*', function (req, res) {
 });
 
 app.use((err, request, response) => {
-    console.log(err);
-    response.status(500).send('Something broke!');
-});
-
-app.listen(port, (err) => {
-    if (err) {
-        return console.log('something bad happened', err);
-    }
-
-    console.log(`server is listening on ${port}`);
+    console.log('Error: ', err, err && err.stack);
+    response.status(500).json({'error': err});
 });

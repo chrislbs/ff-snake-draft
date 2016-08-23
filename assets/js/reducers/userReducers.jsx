@@ -9,6 +9,8 @@ import * as ActionTypes from '../actions';
 export function users(
     state = fromJS({
         fetching: false,
+        creating: false,
+        deleting: false,
         all: []
     }),
     action
@@ -30,16 +32,16 @@ export function users(
 
         // CREATE_USER Methods
         case ActionTypes.CREATE_USER:
-            return state.set('fetching', true);
+            return state.set('creating', true);
 
         case ActionTypes.CREATE_USER_SUCCESS:
             // Add the new user to the list of all users
-            return state.set('fetching', false)
+            return state.set('creating', false)
                 .update('all', all => all.push(fromJS(action.response)));
 
         case ActionTypes.CREATE_USER_FAILURE:
             return state.merge({
-                fetching: false,
+                creating: false,
                 error: action.error
             });
 
@@ -59,21 +61,20 @@ export function users(
 
         // DELETE_USER Methods
         case ActionTypes.DELETE_USER:
-            return state.set('fetching', true);
+            return state.set('deleting', true);
 
         case ActionTypes.DELETE_USER_SUCCESS:
-            console.log('action: ', action);
             const idx = state.get('all').findIndex(p => p.get('id') === action.response.id);
 
             // If the deleted user is in the list of all users, remove him/her. Otherwise just turn off the
             // fetching flag
             return idx === -1 ?
-                state.set('fetching', false)
-                    : state.set('fetching', false).deleteIn(['all', idx]);
+                state.set('deleting', false)
+                    : state.set('deleting', false).deleteIn(['all', idx]);
 
         case ActionTypes.DELETE_USER_FAILURE:
             return state.merge({
-                fetching: false,
+                deleting: false,
                 error: action.error
             });
 
