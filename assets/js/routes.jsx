@@ -8,10 +8,10 @@ import Dashboard from './containers/Dashboard';
 import PathSection from './containers/PathSection';
 
 import PlayersPage from './containers/PlayersPage';
-import PlayerProfile from './containers/PlayerProfile';
+import PlayerProfilePage from './containers/PlayerProfilePage';
 
 import UsersPage from './containers/UsersPage';
-import UserProfile from './containers/UserProfile';
+import UserProfilePage from './containers/UserProfilePage';
 
 import ExamplePage from './containers/ExamplePage';
 

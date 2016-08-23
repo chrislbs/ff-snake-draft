@@ -14,7 +14,7 @@ var gulp = require('gulp'),
     dirs = {
         i: {
             node: __dirname + '/node_modules',
-            sass: __dirname + '/assets/styles',
+            sass: __dirname + '/assets/scss',
             js: __dirname + '/assets/js'
         },
         o: {
