@@ -115,21 +115,21 @@ export default store => next => action => {
     function tryFetch() {
         return fetch(fullUrl, options)
             .then(response => {
-                console.log('raw response: ', response);
+                console.log('raw response: ', fullUrl, response);
 
                 if (!response.ok) {
                     return Promise.reject(response);
                 }
 
                 // Check if this is a json response
-                if (response.headers.get('Content-Type') === 'application/json') {
+                if (response.headers.get('Content-Type').search(/application\/json/gi) >= 0) {
                     return response.json();
                 } else {
                     return response.text();
                 }
             })
             .then(response => {
-                console.log('parsed response: ', response, fullUrl, options);
+                console.log('parsed response: ', fullUrl, response);
                 next(actionWith({
                      response,
                      type: successType,
