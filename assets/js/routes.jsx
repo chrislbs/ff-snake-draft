@@ -4,17 +4,15 @@ import React from 'react';
 import { Route, IndexRoute } from 'react-router';
 
 import App from './containers/App';
-import IndexPage from './containers/IndexPage';
+import Dashboard from './containers/Dashboard';
+import PathSection from './containers/PathSection';
 
-import PlayersSection from './containers/PlayersSection';
 import PlayersPage from './containers/PlayersPage';
 import PlayerProfile from './containers/PlayerProfile';
 
-import UsersSection from './containers/UsersSection';
 import UsersPage from './containers/UsersPage';
 import UserProfile from './containers/UserProfile';
 
-import ExampleSection from './containers/ExampleSection';
 import ExamplePage from './containers/ExamplePage';
 
 // This route tree defines the urls for our UI and how they map to container components. Each route's "component" will be rendered
@@ -27,19 +25,19 @@ import ExamplePage from './containers/ExamplePage';
 export default (
     <Route name="app" path="/" component={App}>
 
-        <IndexRoute component={IndexPage} />
+        <IndexRoute component={Dashboard} />
 
-        <Route name="players" path="players" component={PlayersSection}>
+        <Route name="players" path="players" component={PathSection}>
             <IndexRoute name="all-players" component={PlayersPage} />
-            <Route name="player-profile" component={PlayerProfilePage} />
+            <Route name="player-profile" path=":id" component={PlayerProfilePage} />
         </Route>
 
-        <Route name="users" path="users" component={UsersSection}>
+        <Route name="users" path="users" component={PathSection}>
             <IndexRoute name="all-users" component={UsersPage} />
-            <Route name="user-profile" component={UserProfilePage} />
+            <Route name="user-profile" path=":id" component={UserProfilePage} />
         </Route>
 
-        <Route name="example-route" path="example" component={ExampleSection}>
+        <Route name="example-route" path="example" component={PathSection}>
             <IndexRoute name="example-route" component={ExamplePage} />
             <Route name="example-page" path="page" component={ExamplePage} />
         </Route>
