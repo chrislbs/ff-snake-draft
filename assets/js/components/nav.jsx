@@ -57,16 +57,6 @@ export class Nav extends Component {
                             <li><Link to={{pathname: "/users/", query: nav_query}} activeClassName="active">All Users</Link></li>
                         </ul>
                     </li>
-
-                    <li className="dropdown">
-                        <Link to={{pathname: "/example/", query: nav_query}} activeClassName="active" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" id="dm3">
-                            <span className="glyphicon glyphicon-transfer"></span><br /><span className="nav-label">Example Section</span>
-                        </Link>
-
-                        <ul aria-labelledby="dm3" className="dropdown-menu right">
-                            <li><Link to={{pathname: "/example/page/", query: nav_query}}>Example Page</Link></li>
-                        </ul>
-                    </li>
                 </ul>
             </nav>
         );
