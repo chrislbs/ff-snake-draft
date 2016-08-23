@@ -36,18 +36,18 @@ export class Nav extends Component {
                         </Link>
 
                         <ul aria-labelledby="dm1" className="dropdown-menu right">
-                            <li><Link to={{pathname: "/players/", query: nav_query}} activeClassName="active">All</Link></li>
+                            <li><Link to={{pathname: "/players/", query: nav_query}} activeClassName="active">All Players</Link></li>
                         </ul>
                     </li>
 
                     {/* Users nav menu */}
                     <li className="dropdown">
                         <Link to={{pathname: "/users/", query: nav_query}} activeClassName="active" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" id="dm2">
-                            <span className="glyphicon glyphicon-star"></span><br /><span className="nav-label">Users</span>
+                            <span className="glyphicon glyphicon-user"></span><br /><span className="nav-label">Users</span>
                         </Link>
 
                         <ul aria-labelledby="dm2" className="dropdown-menu right">
-                            <li><Link to={{pathname: "/users/", query: nav_query}} activeClassName="active">All</Link></li>
+                            <li><Link to={{pathname: "/users/", query: nav_query}} activeClassName="active">All Users</Link></li>
                         </ul>
                     </li>
 
