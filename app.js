@@ -31,67 +31,66 @@ app.get('/users', function(request, response) {
 
     data.getUsers()
         .then(function(users) {
-            response.send(users);
+            response.status(200).json(users);
         })
         .catch(function(err) {
-            console.log(err);
-            response.status(500).send(err);
+            console.log('Error getting users: ', err);
+            response.status(500).json({'error': err});
         });
 });
 
 app.post('/users', function(request, response) {
 
     const user = request.body;
-    console.log(user);
+    //console.log(user);
     data.createUser(user)
         .then(function() {
-            console.log(arguments);
-            response.send(`${user.username} created`);
+            response.status(200).json({'message': `${user.username} created`});
         })
         .catch(function(err) {
-            console.log(err);
-            response.status(500).send(err);
+            console.log('Error creating user: ', err);
+            response.status(500).json({'error': err});
         });
 });
 
 app.post('/players', function(request, response) {
 
     const player = request.body;
-    console.log(player);
+    //console.log(player);
     players.createPlayer(player)
         .then((playerId) => {
             player.id = playerId;
-            response.send(player);
+            response.status(200).json(player);
         })
-        .catch((err) => response.status(500).send(err));
+        .catch((err) => response.status(500).json({'error': err}));
 });
 
 app.get('/players', function(request, response) {
 
     players.getAllPlayers()
         .then((players) => {
-            response.send(players);
+            response.status(200).json(players);
         })
-        .catch((err) => response.status(500).send(err));
+        .catch((err) => response.status(500).json({'error': err}));
 });
 
 app.get('/players/:id', function(request, response) {
     players.findPlayer(request.params.id)
         .then((player) => {
             if (player === null) {
-                response.status(404).send();
+                response.status(404).json({'message': `Unable to locate player with id: ${request.params.id}`});
             }
             else {
-                response.send(player);
+                response.status(200).json(player);
             }
         })
-        .catch((err) => response.status(500).send(err));
+        .catch((err) => response.status(500).json({'error': err}));
 });
 
 app.delete('/players/:id', function(request, response) {
     players.deletePlayer(request.params.id)
-        .then(() => response.status(204).send())
-        .catch((err) => response.status(500).send(err));
+        .then(() => response.status(204).json({'message': `Successfully deleted player with id: ${request.params.id}`}))
+        .catch((err) => response.status(500).json({'error': err}));
 });
 
 // Default route if no match was found for the url
