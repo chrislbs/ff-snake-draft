@@ -19,7 +19,16 @@ function log() {
  */
 function createUserTable(connection) {
     log('create table', arguments);
-    return connection.query('CREATE TABLE IF NOT EXISTS users (username VARCHAR(15), age INT)')
+
+    const stmt = `
+    CREATE TABLE IF NOT EXISTS users (
+        id INT NOT NULL AUTO_INCREMENT,
+        username VARCHAR(15) NOT NULL,
+        age INT,
+        PRIMARY KEY (id)
+    )`;
+
+    return connection.query(stmt)
         .then(function() {
             return connection;
         });

@@ -46,6 +46,10 @@ def startContainers(dev=False, image_name=None):
     for key, settings in sorted(containers.items(), key=lambda x: x[1]['order']):
         if image_name is None or image_name == key:
             with fab.settings(warn_only=True):
+                # Kill container if it is running
+                if fab.local('docker ps | grep {}'.format(key), capture=True):
+                    fab.local('docker kill {}'.format(key))
+                # Remove the container if it is present
                 if fab.local('docker ps -a | grep {}'.format(key), capture=True):
                     fab.local('docker rm -f {}'.format(key))
 

@@ -5,8 +5,10 @@ import BasePage from './BasePage';
 import { List } from 'immutable';
 import PathSection from './PathSection';
 import { connect } from 'react-redux';
-import { getAllUsers, getAllPlayers } from '../actions';
+import { getAllUsers, getAllPlayers, deletePlayer, deleteUser } from '../actions';
 import classNames from 'classnames';
+import { PlayerList } from '../components/players';
+import { UserList } from '../components/users';
 
 class Dashboard extends BasePage {
 
@@ -26,6 +28,18 @@ class Dashboard extends BasePage {
         getAllUsers();
     };
 
+    handleDeletePlayer = (id) => {
+        const { deletePlayer } = this.props;
+
+        deletePlayer(id);
+    };
+
+    handleDeleteUser = (id) => {
+        const { deleteUser } = this.props;
+
+        deleteUser(id);
+    };
+
     render() {
         const { fetching, users, players } = this.props;
 
@@ -39,11 +53,11 @@ class Dashboard extends BasePage {
                 <div className="page-wrapper players-page-wrapper row">
                     <div className={loadingWrapperClasses}>
                         <div className="col-xs-12 page-title">
-                            <h1>Players</h1> 
-                            {/* This will be a list of players */}
+                            {/* List all of the players and tools for creating/deleting them. */}
+                            <PlayerList players={players} onDeletePlayer={this.handleDeletePlayer.bind(this)} />
 
-                            <h1>Users</h1>
-                            {/* This will be a list of users */}
+                            {/* List all of the users and tools for creating/deleting them. */}
+                            <UserList users={users} onDeleteUser={this.handleDeleteUser.bind(this)} />
                         </div>
                     </div>
                     {loadingSpinner}
@@ -62,5 +76,5 @@ export default connect(
             users: state.users.get('all')
         };
     },
-    { getAllPlayers, getAllUsers }
+    { getAllPlayers, getAllUsers, deletePlayer, deleteUser }
 )(Dashboard);
