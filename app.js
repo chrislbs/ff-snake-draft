@@ -50,7 +50,7 @@ app.post('/players', function(request, response) {
     players.createPlayer(player)
         .then((playerId) => {
             player.id = playerId;
-            return player;
+            response.send(player);
         })
         .catch((err) => response.status(500).send(err));
 });
