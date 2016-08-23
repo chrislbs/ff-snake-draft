@@ -1,17 +1,113 @@
 {
-  "name": "fantasy-football-snake",
-  "version": "0.0.1",
-  "private": true,
-  "author": "Chris Pounds",
-  "scripts": {
-    "start": "node app.js"
-  },
-  "dependencies": {
-    "bluebird": "^2.10.2",
-    "body-parser": "^1.15.2",
-    "express": "^4.14.0",
-    "moment": "^2.14.1",
-    "mysql": "^2.11.1",
-    "promise-mysql": "^1.3.2"
-  }
+    "name": "fantasy-football-snake",
+    "version": "0.0.1",
+    "private": true,
+    "author": "Chris Pounds",
+    "description": "Tool for optimizing your fantasy football drafts",
+    "main": "./app.js",
+    "scripts": {
+        "start": "node app.js"
+    },
+    "dependencies": {
+        "bluebird": "^2.10.2",
+        "body-parser": "^1.15.2",
+        "colors": "1.1.2",
+        "connect-flash": "^0.1.1",
+        "connect-redis": "3.0.2",
+        "express": "^4.14.0",
+        "express-extras": "0.3.1",
+        "express-session": "1.13.0",
+        "getconfig": "2.2.0",
+        "moment": "^2.14.1",
+        "mysql": "^2.11.1",
+        "promise-mysql": "^1.3.2",
+        "swig": "1.4.2",
+
+        "babel-polyfill": "6.13.0",
+        "bootstrap": "3.3.6",
+        "bootstrap-sass": "3.3.6",
+        "classnames": "2.2.4",
+        "es5-shim": "4.5.2",
+        "gulp-sass": "2.3.1",
+        "gulp-watch": "4.3.9",
+        "history": "2.0.0",
+        "immutable": "3.8.1",
+        "isomorphic-fetch": "2.2.1",
+        "lodash": "4.15.0",
+        "moment": "2.14.1",
+        "react": "15.3.1",
+        "react-addons-css-transition-group": "15.3.1",
+        "react-addons-transition-group": "15.3.1",
+        "react-dom": "15.3.1",
+        "react-immutable-proptypes": "2.1.0",
+        "react-redux": "4.4.5",
+        "react-router": "2.7.0",
+        "react-router-redux": "4.0.5",
+        "redux": "3.5.2",
+        "redux-logger": "2.6.1",
+        "redux-thunk": "2.1.0"
+    },
+    "devDependencies": {
+        "babelify": "7.3.0",
+        "babel-core": "6.13.1",
+        "babel-plugin-inline-environment-variables": "^1.0.1",
+        "babel-plugin-transform-class-properties": "6.11.5",
+        "babel-plugin-transform-es2015-block-scoping": "6.10.1",
+        "babel-plugin-transform-es2015-classes": "6.9.0",
+        "babel-plugin-transform-proto-to-assign": "6.9.0",
+        "babel-preset-es2015": "6.13.1",
+        "babel-preset-react": "6.11.1",
+        "babel-preset-stage-0": "6.5.0",
+        "browserify": "13.1.0",
+        "browserify-shim": "3.8.12",
+        "del": "2.2.0",
+        "gulp": "^3.9.0",
+        "gulp-bower": "0.0.11",
+        "gulp-rename": "1.2.2",
+        "gulp-sass": "^2.1.1",
+        "gulp-sourcemaps": "1.6.0",
+        "gulp-uglify": "1.5.1",
+        "gulp-uglifycss": "1.0.6",
+        "gulp-watch": "^4.3.5",
+        "gulp-replace": "^0.5.4",
+        "redux-devtools": "3.2.0",
+        "redux-devtools-log-monitor": "1.0.11",
+        "redux-devtools-dock-monitor": "1.1.1",
+        "through2": "^2.0.1",
+        "vinyl-source-stream": "1.1.0",
+        "vinyl-buffer": "1.0.0"
+    },
+    "keywords": [
+        "Fantasy Football",
+        "NFL",
+        "NFL",
+        "Draft",
+        "Winning"
+    ],
+    "contributors": [
+        {
+            "name": "Chris Pounds",
+            "email": "Chrislbs@gmail.com"
+        },
+        {
+            "name": "Corey Pauley",
+            "email": "cpauleyrun@gmail.com"
+        }
+    ],
+    "jshintConfig": {
+        "esnext": true
+    },
+    "browserify": {
+        "transform": [
+            "browserify-shim"
+        ]
+    },
+    "browserify-shim": {
+        "modernizr": {
+            "exports": "modernizr"
+        },
+        "fastclick": {
+            "exports": "fastclick"
+        }
+    }
 }

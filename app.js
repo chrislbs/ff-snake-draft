@@ -1,97 +1,71 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const data = require('./libs/data');
-const players = require('./libs/data/players');
-const app = express();
-const port = 8080;
+'use strict';
+
+var express = require('express'),
+    path = require('path'),
+    _ = require('lodash'),
+    bodyParser = require('body-parser'),
+    swig = require('swig'),
+    utils = require('utils'),
+    app = express(),
+    apiRouter = express.Router(),
+    port = 8080,
+    server;
 
 app.use((request, response, next) => {
     //console.log(request.headers);
-    next()
+    next();
 });
 
+app.set('rootPath', __dirname);
+
+// Global Paths
+app.set('paths', {
+    middleware: path.join(app.get('rootPath'), 'middleware'),
+    routes: path.join(app.get('rootPath'), 'routes'),
+    views: path.join(app.get('rootPath'), 'views')
+});
+
+// Start listening to the port
+server = app.listen(port);
+console.log('listening to port: ', port);
+server.timeout = 300000;
+
+// Body parsing middleware
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true, limit: '50mb'}));
 
-app.get('/', (request, response) => {
-    response.send('Hello from Express!');
+// Swig Templating Setup
+app.engine('html', swig.renderFile);
+app.set('view engine', 'html');
+app.set('views', __dirname + '/views');
+app.set('view cache', false);
+swig.setDefaults({cache: false});
+
+// Setup static file server for images, html, css/fonts, and js
+app.use('/public', express.static('public'));
+
+/* Use getModulesInDirectory(path, [ignore_prefixes...], module_callback) to import all of the
+ * middleware and routes.
+ */
+// Middleware
+_.each(utils.getModulesInDirectory(app.get('paths').middleware, ['_', '.']), function (middleware) {
+    require(middleware)(app, apiRouter);
 });
 
-app.get('/users', function(request, response) {
-
-    data.getUsers()
-        .then(function(users) {
-            response.send(users);
-        })
-        .catch(function(err) {
-            console.log(err)
-            response.status(500).send(err);
-        });
+// Routes
+_.each(utils.getModulesInDirectory(app.get('paths').routes, ['_', '.']), function (route) {
+    require(route)(app, apiRouter);
 });
 
-app.post('/users', function(request, response) {
+// Setup the api router with a url prefixed by a version #
+app.use('/api/v1', apiRouter);
 
-    const user = request.body;
-    console.log(user);
-    data.createUser(user)
-        .then(function() {
-            console.log(arguments)
-            response.send(`${user.username} created`);
-        })
-        .catch(function(err) {
-            console.log(err)
-            response.status(500).send(err);
-        });
+// Default route if no match was found for the url just returns the rendered base.html
+app.all('/*', function (req, res) {
+    res.render('base', {});
 });
 
-app.post('/players', function(request, response) {
-
-    const player = request.body;
-    console.log(player);
-    players.createPlayer(player)
-        .then((playerId) => {
-            player.id = playerId;
-            response.send(player);
-        })
-        .catch((err) => response.status(500).send(err));
-});
-
-app.get('/players', function(request, response) {
-
-    players.getAllPlayers()
-        .then((players) => {
-            response.send(players);
-        })
-        .catch((err) => response.status(500).send(err));
-});
-
-app.get('/players/:id', function(request, response) {
-    players.findPlayer(request.params.id)
-        .then((player) => {
-            if (player == null) {
-                response.status(404).send();
-            }
-            else {
-                response.send(player);
-            }
-        })
-        .catch((err) => response.status(500).send(err))
-});
-
-app.delete('/players/:id', function(request, response) {
-    players.deletePlayer(request.params.id)
-        .then(() => response.status(204).send())
-        .catch((err) => response.status(500).send(err))
-});
-
-app.use((err, request, response, next) => {
-    console.log(err);
-    response.status(500).send('Something broke!')
-});
-
-app.listen(port, (err) => {
-    if (err) {
-        return console.log('something bad happened', err)
-    }
-
-    console.log(`server is listening on ${port}`)
+app.use((err, request, response) => {
+    console.log('Error: ', err, err && err.stack);
+    response.status(500).json({'error': err});
 });

@@ -11,3 +11,17 @@ node_modules
 # npm cache directory
 .npm
 
+# Vim
+*.swp
+*.swo
+
+# Python
+*.pyc
+
+# Bundled JS
+public/js/bundle.js
+public/js/bundle.min.js
+public/js/bundle.min.js.map
+
+# CSS
+public/css/**/*.css

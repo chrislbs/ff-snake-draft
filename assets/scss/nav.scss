@@ -1,0 +1,62 @@
+@import "variables";
+
+.app-nav, .main-content {
+    display: table-cell;
+    border-left: 1px solid $nav-border-color;
+}
+
+.app-nav {
+	width: 82px;
+    background: $nav-bg-color;
+    text-align: center;
+	vertical-align: top;
+	padding-top: 35px;
+    position: relative;
+    z-index: 1001;
+
+    .nav {
+        position: fixed;
+        top: 0;
+        width: 82px;
+        z-index: 1000;
+
+        & > li {
+            &:hover, &:focus {
+                & > a {
+                    color: $data-blue;
+                    background-color: $nav-hover-bg-color;
+                }
+            }
+
+            & > a {
+                color: $nav-label-color;
+                font-size: 0.89em;
+                padding: 15px 0 12px 0;
+
+                &.active {
+                    color: $data-blue;
+                    background: $body-bg;
+                }
+
+                .caret {
+                    font-size: 0.8em;
+                }
+            }
+
+            .dropdown-menu {
+                a {
+                    font-size: 1.2em;
+                }
+            }
+
+            .glyphicon, .icon {
+                font-size: 2em;
+            }
+
+            .nav-label {
+                font-size: 0.89em;
+                font-weight: bold;
+            }
+        }
+    }
+}
