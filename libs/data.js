@@ -1,13 +1,6 @@
 const mysql = require('promise-mysql');
 const Promise = require('bluebird');
-
-const pool = mysql.createPool({
-    connectionLimit: 10,
-    host: 'localhost',
-    user: 'root',
-    password: 'root',
-    database: 'ff'
-});
+const db = require('./data/db');
 
 const DEBUG = true;
 
@@ -15,16 +8,6 @@ function log() {
     if (DEBUG) {
         console.log.apply(this, arguments);
     }
-}
-
-/**
- * Retrieve a promised connection from a connection pool that will be released at the end of the
- * promise chain
- */
-function getConnection() {
-    return pool.getConnection().disposer(function(connection) {
-        pool.releaseConnection(connection)
-    });
 }
 
 /**
@@ -47,7 +30,7 @@ function createUserTable(connection) {
  * @returns {Promise}
  */
 function getUsers() {
-    return Promise.using(getConnection(), createUserTable)
+    return Promise.using(db.getConnection(), createUserTable)
         .then(function (connection) {
             var res = connection.query('SELECT * FROM users');
             log('select args: ', arguments);
@@ -66,14 +49,11 @@ function getUsers() {
  * @returns {Promise}
  */
 function createUser(userObj) {
-    return Promise.using(getConnection(), createUserTable)
+    return Promise.using(db.getConnection(), createUserTable)
         .then(function(connection) {
             connection.query('INSERT INTO users SET ?', userObj)
         })
 }
-
-process.on('SIGTERM', function() { pool.end() });
-process.on('SIGINT', function() { pool.end() });
 
 module.exports.getUsers = getUsers;
 module.exports.createUser = createUser;
