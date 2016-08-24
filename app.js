@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const data = require('./libs/data');
-const players = require('./libs/data/players');
+const apiRoutes = require('./routes/api_routes');
 const app = express();
 const port = 8080;
 
@@ -12,9 +12,8 @@ app.use((request, response, next) => {
 
 app.use(bodyParser.json());
 
-app.get('/', (request, response) => {
-    response.send('Hello from Express!');
-});
+app.use('/', express.static('public'));
+app.use('/api', apiRoutes);
 
 app.get('/users', function(request, response) {
 
@@ -41,46 +40,6 @@ app.post('/users', function(request, response) {
             console.log(err)
             response.status(500).send(err);
         });
-});
-
-app.post('/players', function(request, response) {
-
-    const player = request.body;
-    console.log(player);
-    players.createPlayer(player)
-        .then((playerId) => {
-            player.id = playerId;
-            response.send(player);
-        })
-        .catch((err) => response.status(500).send(err));
-});
-
-app.get('/players', function(request, response) {
-
-    players.getAllPlayers()
-        .then((players) => {
-            response.send(players);
-        })
-        .catch((err) => response.status(500).send(err));
-});
-
-app.get('/players/:id', function(request, response) {
-    players.findPlayer(request.params.id)
-        .then((player) => {
-            if (player == null) {
-                response.status(404).send();
-            }
-            else {
-                response.send(player);
-            }
-        })
-        .catch((err) => response.status(500).send(err))
-});
-
-app.delete('/players/:id', function(request, response) {
-    players.deletePlayer(request.params.id)
-        .then(() => response.status(204).send())
-        .catch((err) => response.status(500).send(err))
 });
 
 app.use((err, request, response, next) => {
