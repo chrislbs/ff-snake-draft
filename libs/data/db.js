@@ -1,11 +1,14 @@
-const mysql = require('promise-mysql');
+'use strict';
+
+const mysql = require('promise-mysql'),
+    config = require('getconfig');
 
 const pool = mysql.createPool({
     connectionLimit: 10,
-    host: 'localhost',
-    user: 'root',
-    password: 'root',
-    database: 'ff'
+    host: config.db.host,
+    user: config.db.user,
+    password: config.db.password,
+    database: config.db.database
 });
 
 /**
@@ -14,11 +17,11 @@ const pool = mysql.createPool({
  */
 function getConnection() {
     return pool.getConnection().disposer(function(connection) {
-        pool.releaseConnection(connection)
+        pool.releaseConnection(connection);
     });
 }
 
-process.on('SIGTERM', function() { pool.end() });
-process.on('SIGINT', function() { pool.end() });
+process.on('SIGTERM', function() { pool.end(); });
+process.on('SIGINT', function() { pool.end(); });
 
 module.exports.getConnection = getConnection;
