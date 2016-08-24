@@ -15,17 +15,26 @@ containers = {
         'order': 1,
         'main': True,
         'run': 'nodemon app.js',
+        'network': 'ff-snake-draft-network',
         'parameters': [
             ('-p', '6969:8080'),
-            ('-e', '"NODE_ENV=local"'),
-            ('--link', 'mysql:mysql')
+            ('-e', '"NODE_ENV=local"')
         ]
     },
     'mysql': {
         'order': 0,
+        'network': 'ff-snake-draft-network',
         'parameters': [
             ('-e', '"MYSQL_ROOT_PASSWORD=root"'),
             ('-e', '"MYSQL_DATABASE=ff"')
+        ]
+    }
+}
+
+networks = {
+    'ff-snake-draft-network': {
+        'parameters': [
+            ('--driver', 'bridge')
         ]
     }
 }
@@ -58,6 +67,9 @@ def startContainers(dev=False, image_name=None):
                 for pair in settings['parameters']:
                     parameters += ' {} {}'.format(pair[0], pair[1])
 
+            if 'network' in settings:
+                parameters += ' --network={}'.format(settings['network'])
+
             run_cmd = ''
             if dev and 'run' in settings:
                 run_cmd = ' bash'
@@ -76,8 +88,21 @@ def startContainers(dev=False, image_name=None):
 
 
 @fab.task
+def network():
+    for key, settings in networks.items():
+        with fab.settings(warn_only=True):
+            # Only create the network if it isn't already there
+            if not fab.local('docker network ls | grep {}'.format(key), capture=True):
+                # Build the parameters
+                parameters = ''.join([' {} {}'.format(x[0], x[1]) for x in settings['parameters']]) if 'parameters' in settings else ''
+
+                fab.local('docker network create{} {}'.format(parameters, key))
+
+
+@fab.task
 def up():
     build()
+    network()
     startContainers()
 
 
@@ -85,4 +110,5 @@ def up():
 def dev(build_images=False, name=None):
     if build_images:
         build()
+    network()
     startContainers(dev=True, image_name=name)

@@ -1,13 +1,14 @@
 'use strict';
 
-const mysql = require('promise-mysql');
+const mysql = require('promise-mysql'),
+    config = require('getconfig');
 
 const pool = mysql.createPool({
     connectionLimit: 10,
-    host: process.env.MYSQL_PORT_3306_TCP_ADDR || 'localhost',
-    user: 'root',
-    password: process.env.MYSQL_ENV_MYSQL_ROOT_PASSWORD || 'root',
-    database: process.env.MYSQL_ENV_MYSQL_DATABASE || 'ff'
+    host: config.db.host,
+    user: config.db.user,
+    password: config.db.password,
+    database: config.db.database
 });
 
 /**
