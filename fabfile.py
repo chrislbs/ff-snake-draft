@@ -16,7 +16,7 @@ containers = {
         'main': True,
         'run': 'nodemon app.js',
         'parameters': [
-            ('-p', '8080:8080'),
+            ('-p', '6969:8080'),
             ('-e', '"NODE_ENV=local"'),
             ('--link', 'mysql:mysql')
         ]
