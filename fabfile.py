@@ -51,7 +51,7 @@ def build():
                 fab.local('docker pull {}'.format(settings['tag']))
 
 
-def startContainers(dev=False, image_name=None):
+def startContainers(dev=False, image_name=None, env=[('NODE_ENV', 'docker')]):
     for key, settings in sorted(containers.items(), key=lambda x: x[1]['order']):
         if image_name is None or image_name == key:
             with fab.settings(warn_only=True):
@@ -69,6 +69,9 @@ def startContainers(dev=False, image_name=None):
 
             if 'network' in settings:
                 parameters += ' --network={}'.format(settings['network'])
+
+            # Add environment variables to parameters
+            parameters += ''.join([' -e {}={}'.format(x[0], x[1]) for x in env])
 
             run_cmd = ''
             if dev and 'run' in settings:
