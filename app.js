@@ -8,7 +8,7 @@ const express = require('express'),
     apiRouter = express.Router(),
     _ = require('lodash'),
     app = express(),
-    port = 8080;
+    config = require('getconfig');
 
 app.set('rootPath', __dirname);
 // Global Paths
@@ -61,12 +61,12 @@ app.post('/users', function(request, response) {
 // Needs to come after all of the other middleware so you don't expose your server code
 app.use('/', express.static('public'));
 
-app.listen(port, (err) => {
+app.listen(config.server.port, (err) => {
     if (err) {
         return console.log('something bad happened', err);
     }
 
-    console.log(`server is listening on ${port}`);
+    console.log(`server is listening on ${config.server.port}`);
 });
 
 /* Error handler needs to be last so we don't end up with an orphaned process */
