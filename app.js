@@ -1,56 +1,48 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const data = require('./libs/data');
-const apiRoutes = require('./routes/api_routes');
-const app = express();
-const port = 8080;
+'use strict';
 
-app.use((request, response, next) => {
-    //console.log(request.headers);
-    next()
+const express = require('express'),
+    path = require('path'),
+    bodyParser = require('body-parser'),
+    utils = require('./libs/utils'),
+    apiRouter = express.Router(),
+    _ = require('lodash'),
+    app = express(),
+    config = require('getconfig');
+
+app.set('rootPath', __dirname);
+// Global Paths
+app.set('paths', {
+    routes: path.join(app.get('rootPath'), 'routes'),
+    middleware: path.join(app.get('rootPath'), 'middleware')
 });
 
 app.use(bodyParser.json());
 
-app.use('/', express.static('public'));
-app.use('/api', apiRoutes);
-
-app.get('/users', function(request, response) {
-
-    data.getUsers()
-        .then(function(users) {
-            response.send(users);
-        })
-        .catch(function(err) {
-            console.log(err)
-            response.status(500).send(err);
-        });
+// Pull in all of the middleware
+_.each(utils.getModulesInDirectory(app.get('paths').middleware, ['_', '.']), function (middleware) {
+    require(middleware)(app, apiRouter);
 });
 
-app.post('/users', function(request, response) {
-
-    const user = request.body;
-    console.log(user);
-    data.createUser(user)
-        .then(function() {
-            console.log(arguments)
-            response.send(`${user.username} created`);
-        })
-        .catch(function(err) {
-            console.log(err)
-            response.status(500).send(err);
-        });
+// Pull in all of the routes
+_.each(utils.getModulesInDirectory(app.get('paths').routes, ['_', '.']), function (route) {
+    require(route)(app, apiRouter);
 });
 
-app.use((err, request, response, next) => {
-    console.log(err);
-    response.status(500).send('Something broke!')
-});
+app.use('/api', apiRouter);
 
-app.listen(port, (err) => {
+// Needs to come after all of the other middleware so you don't expose your server code
+app.use('/public', express.static('public'));
+
+app.listen(config.server.port, (err) => {
     if (err) {
-        return console.log('something bad happened', err)
+        return console.log('something bad happened', err);
     }
 
-    console.log(`server is listening on ${port}`)
+    console.log(`server is listening on ${config.server.port}`);
+});
+
+/* Error handler needs to be last so we don't end up with an orphaned process */
+app.use((err, request, response) => {
+    console.log(err);
+    response.status(500).send('Something broke!');
 });
