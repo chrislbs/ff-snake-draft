@@ -3,8 +3,6 @@
 var fs = require('fs'),
     path = require('path'),
     _ = require('lodash'),
-    config = require('getconfig'),
-    request = require('request'),
     obj = {
         getModulesInDirectory: function (dirPath, ignorePrefixes) {
             /* Gets all of the .js files in a directory recursively. Files can be ingored by their
@@ -33,16 +31,7 @@ var fs = require('fs'),
                 }
             });
             return modules;
-        },
-        apiRequest: request.defaults({
-            'baseUrl': config.dashboardApiUrl,
-            'agentOptions': {
-                'rejectUnauthorized': false
-            },
-            'timeout': 45000,
-            'json': true,
-            'gzip': true
-        })
+        }
     };
 
 module.exports = obj;
