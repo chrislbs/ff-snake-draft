@@ -6,7 +6,7 @@ module.exports = function(app, apiRouter) {
     /**
      * Create a new player
      */
-    apiRouter.post('/player/', function(request, response) {
+    apiRouter.post('/players/', function(request, response) {
 
         const player = request.body;
         console.log(player);
@@ -21,7 +21,7 @@ module.exports = function(app, apiRouter) {
     /**
      * Retrieve all players
      */
-    apiRouter.get('/player/', function(request, response) {
+    apiRouter.get('/players/', function(request, response) {
 
         players.getAllPlayers()
             .then((players) => {
@@ -33,7 +33,7 @@ module.exports = function(app, apiRouter) {
     /**
      * Retrieve a specific players
      */
-    apiRouter.get('/player/:id', function(request, response) {
+    apiRouter.get('/players/:id', function(request, response) {
         players.findPlayer(request.params.id)
             .then((player) => {
                 if (player === null) {
@@ -49,7 +49,7 @@ module.exports = function(app, apiRouter) {
     /**
      * Delete a specific players
      */
-    apiRouter.delete('/player/:id', function(request, response) {
+    apiRouter.delete('/players/:id', function(request, response) {
         players.deletePlayer(request.params.id)
             .then(() => response.status(204).send())
             .catch((err) => response.status(500).send(err));
