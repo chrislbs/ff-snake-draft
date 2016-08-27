@@ -1,9 +1,8 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const data = require('./libs/data');
-const apiRoutes = require('./routes/api_routes');
-const app = express();
-const port = 8080;
+const express = require('express'),
+    bodyParser = require('body-parser'),
+    apiRoutes = require('./routes/api_routes'),
+    app = express(),
+    port = 8080;
 
 app.use((request, response, next) => {
     //console.log(request.headers);
@@ -14,33 +13,6 @@ app.use(bodyParser.json());
 
 app.use('/', express.static('public'));
 app.use('/api', apiRoutes);
-
-app.get('/users', function(request, response) {
-
-    data.getUsers()
-        .then(function(users) {
-            response.send(users);
-        })
-        .catch(function(err) {
-            console.log(err)
-            response.status(500).send(err);
-        });
-});
-
-app.post('/users', function(request, response) {
-
-    const user = request.body;
-    console.log(user);
-    data.createUser(user)
-        .then(function() {
-            console.log(arguments)
-            response.send(`${user.username} created`);
-        })
-        .catch(function(err) {
-            console.log(err)
-            response.status(500).send(err);
-        });
-});
 
 app.use((err, request, response, next) => {
     console.log(err);
