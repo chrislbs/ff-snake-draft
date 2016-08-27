@@ -1,3 +1,4 @@
+'use strict';
 const express = require('express'),
     bodyParser = require('body-parser'),
     apiRoutes = require('./routes/api_routes'),

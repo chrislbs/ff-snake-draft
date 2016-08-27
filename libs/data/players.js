@@ -1,7 +1,8 @@
-const mysql = require('promise-mysql');
-const moment = require('moment');
-const Promise = require('bluebird');
-const db = require('./db');
+'use strict';
+const mysql = require('promise-mysql'),
+    moment = require('moment'),
+    Promise = require('bluebird'),
+    db = require('./db');
 
 /**
  * Create the table for storing players if it doesn't exist using the provied connection.
@@ -38,7 +39,7 @@ function createPlayer(player) {
     console.log(data);
     return Promise.using(db.getConnection(), createPlayerTable)
         .then((connection) => {
-            return connection.query('INSERT INTO players SET ?', data)
+            return connection.query('INSERT INTO players SET ?', data);
         })
         .then((result) => result.insertId);
 }
@@ -51,7 +52,7 @@ function createPlayer(player) {
 function getAllPlayers() {
     return Promise.using(db.getConnection(), createPlayerTable)
         .then((connection) => {
-            return connection.query('SELECT * FROM players')
+            return connection.query('SELECT * FROM players');
         });
 }
 
@@ -65,10 +66,10 @@ function findPlayer(playerId) {
     return Promise.using(db.getConnection(), createPlayerTable)
         .then((conn) => {
             var stmt = mysql.format('SELECT * FROM players WHERE id = ?', [playerId]);
-            return conn.query(stmt)
+            return conn.query(stmt);
         })
         .then((rows) => {
-            return rows[0]
+            return rows[0];
         });
 }
 
