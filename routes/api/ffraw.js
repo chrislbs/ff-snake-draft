@@ -1,30 +1,19 @@
 'use strict';
 const express = require('express'),
     router = express.Router(),
-    analysts = require('../../libs/ff-analytics/analysts'),
-    scoring = require('../../libs/ff-analytics/scoring'),
-    ffraw = require('../../libs/ff-analytics/raw');;
-
-/**
- * Retrieve data
- */
-router.get('/analysts', function(request, response) {
-    response.send(analysts.data(2015, true));
-});
-
-router.get('/scoringRules', function(request, response) {
-    response.send(scoring.data);
-});
-
-router.get('/request', function(request, response) {
-    response.send(ffraw.request);
-});
+    projections = require('../../libs/data/ff/projections'),
+    analyticsData = require('../../libs/ff-analytics/data');
 
 router.get('/fetch', function(request, response) {
-    ffraw.fetchData((sc, data) => {
-        console.log(sc);
-        console.log(data);
-        response.send(data);
+    analyticsData.fetch((data) => { response.send(data); });
+});
+
+router.post('/importLatest', function(request, response) {
+
+    analyticsData.fetch((data) => {
+        projections.importData(data)
+            .then((success) => response.send({success : true}))
+            .error((err) => response.send({success : false, err : err}));
     });
 });
 

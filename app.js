@@ -20,10 +20,12 @@ app.use((err, request, response, next) => {
     response.status(500).send('Something broke!')
 });
 
-app.listen(port, (err) => {
+var server = app.listen(port, (err) => {
     if (err) {
         return console.log('something bad happened', err)
     }
 
     console.log(`server is listening on ${port}`)
 });
+
+server.timeout = 15 * 60 * 1000;

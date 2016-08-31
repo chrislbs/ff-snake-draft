@@ -53,6 +53,7 @@ const ptsBracket = [
     }
 ];
 
+// the request to send to http://apps.fantasyfootballanalytics.net:80/Projections/DownloadProjections
 const request = {
     season : 2016,
     week : "0",
@@ -67,28 +68,37 @@ const request = {
     positionVorBaselines : vor.baselines
 };
 
+/**
+ * Parse the data returned from the ff-analytics site and convert it to a list of objects
+ * where the keys in the object represent the header row of a csv and the values are the the data
+ * in each column csv
+ *
+ * @param jsonResponse The raw json response string from the REST api call
+ * @param callback A callback that takes (err, output) where output is the array of parsed objects
+ */
 function parseCsvData(jsonResponse, callback) {
     var csvJson = JSON.parse(jsonResponse);
     var csvData = csvJson['CsvData'];
 
     console.log('Starting parsing');
-    console.log(csvData);
-    console.log(csvData.length);
-    csvParse(csvData, (err, output) => {
+    csvParse(csvData, { columns : true }, (err, output) => {
         console.log('Completed parsing');
-        if(err) {
-            console.log(err);
-        }
-        console.log(output);
         callback(err, output);
     });
 }
 
-function fetchData(onSuccess) {
+/**
+ * Retrieve the current raw projections from ff-analytics website.
+ *
+ * @param onSuccess A callback function that receives a list of objects where each object represents
+ * an individual players projections
+ */
+function fetch(onSuccess) {
 
     var requestObj = JSON.stringify(request);
     console.log('Sending request', requestObj);
 
+    // the request details
     var options = {
         host : 'apps.fantasyfootballanalytics.net',
         port: 80,
@@ -100,6 +110,7 @@ function fetchData(onSuccess) {
         }
     };
 
+    // building the request
     var req = http.request(options, function(res)
     {
         var output = '';
@@ -112,15 +123,12 @@ function fetchData(onSuccess) {
 
         res.on('end', function() {
             console.log('All data fetched');
-            console.log(output);
-            parseCsvData(output, (err, csv) => {
+            parseCsvData(output, (err, parsedData) => {
                 if (err) {
                     console.log(err);
                 }
-                onSuccess(res.statusCode, csv);
+                onSuccess(parsedData);
             });
-            //var obj = JSON.parse(output);
-            //onSuccess(res.statusCode, obj);
         });
     });
 
@@ -133,5 +141,4 @@ function fetchData(onSuccess) {
     req.end();
 }
 
-exports.request = request;
-exports.fetchData = fetchData;
+exports.fetch = fetch;

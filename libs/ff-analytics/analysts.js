@@ -99,7 +99,12 @@ function buildAnalyst(options = {}) {
     }
 }
 
-exports.all = _.map(analysts, (a, name) => {
+const myAnalysts = {
+    Yahoo : analysts.Yahoo,
+    FantasyData : analysts.FantasyData
+};
+
+exports.all = _.map(myAnalysts, (a, name) => {
     var opts = Object.assign({}, a);
     opts.analystName = name;
     return buildAnalyst(opts);
