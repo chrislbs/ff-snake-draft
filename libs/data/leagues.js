@@ -57,7 +57,6 @@ function findLeague(name) {
     return Promise.using(db.getConnection(), createLeagueTable)
         .then((conn) => {
             var stmt = mysql.format('SELECT * FROM leagues WHERE name = ?', [name]);
-            console.log(stmt);
             return conn.query(stmt);
         })
         .then((rows) => {

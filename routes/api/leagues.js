@@ -1,7 +1,8 @@
 'use strict';
 const express = require('express'),
     router = express.Router(),
-    leagues = require('../../libs/data/leagues');
+    leagues = require('../../libs/data/leagues'),
+    rosterSettings = require('./league/roster_settings');
 
 /**
  * Create a new league
@@ -30,6 +31,7 @@ router.get('/', function(request, response) {
         .catch((err) => response.status(500).send(err));
 });
 
+
 /**
  * Retrieve a specific league
  */
@@ -54,5 +56,18 @@ router.delete('/:name', function(request, response) {
         .then(() => response.status(204).send())
         .catch((err) => response.status(500).send(err))
 });
+
+function leagueIdMiddlware(req, res, next) {
+    var leagueName = req.params.name;
+    leagues.findLeague(leagueName)
+        .then((league) => {
+            console.log('middleware');
+            req.leagueId = league.id;
+            next();
+        });
+}
+
+router.use('/:name', leagueIdMiddlware);
+router.use('/:name/rosterSettings', rosterSettings);
 
 module.exports = router;
