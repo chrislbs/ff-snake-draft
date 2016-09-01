@@ -3,6 +3,7 @@ const express = require('express'),
     router = express.Router(),
     leagues = require('../../libs/data/leagues'),
     rosterSettings = require('./league/roster_settings'),
+    scoringSettings = require('./league/scoring_settings'),
     teams = require('./league/teams');
 
 /**
@@ -70,6 +71,7 @@ function leagueIdMiddlware(req, res, next) {
 
 router.use('/:name', leagueIdMiddlware);
 router.use('/:name/rosterSettings', rosterSettings);
+router.use('/:name/scoringSettings', scoringSettings);
 router.use('/:name/teams', teams);
 
 module.exports = router;
