@@ -108,6 +108,11 @@ const projColMap = {
     mflId: buildCharCol('mfl_id')
 };
 
+const colToKeyMap = _.reduce(projColMap, (colToKeyMap, colInfo, key) => {
+    colToKeyMap[colInfo.colName] = key;
+    return colToKeyMap;
+}, {});
+
 function getColumns() {
     return _.map(_.values(projColMap), (col) => {
         return [col.colName, col.colType, col.colMods].join(' ');
@@ -150,6 +155,10 @@ function promiseInserts(connection, inserts) {
     return _.map(inserts, (stmt) => connection.query(stmt));
 }
 
+function getProjectionsForLoad(connection, loadId) {
+    return connection.query('SELECT * from ff_projections where load_id = ?', [loadId]);
+}
+
 function importData(ffProjections) {
     // nested promises?; this can't possibly be right
     return Promise.using(db.getConnection(), (conn) => {
@@ -165,4 +174,21 @@ function importData(ffProjections) {
     });
 }
 
+function fetchProjections(loadId) {
+    return Promise.using(db.getConnection(), createProjectionsTable)
+        .then((conn) => {
+            return getProjectionsForLoad(conn, loadId);
+        })
+        .then((rows) => {
+            return _.map(rows, (row) => {
+                return _.reduce(row, (projection, val, col) => {
+                    var key = colToKeyMap[col];
+                    projection[key] = val;
+                    return projection;
+                }, {});
+            });
+        })
+}
+
 module.exports.importData = importData;
+module.exports.fetchProjections = fetchProjections;

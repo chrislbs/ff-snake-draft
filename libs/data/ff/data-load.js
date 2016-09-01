@@ -1,8 +1,10 @@
 'use strict';
 
 const mysql = require('promise-mysql'),
+    Promise = require('bluebird'),
     moment = require('moment'),
-    db = require('./../db');
+    db = require('./../db'),
+    _ = require('lodash');
 
 /**
  *
@@ -34,4 +36,25 @@ function createLoad(connection) {
         .then((result) => result.insertId)
 }
 
+function getAll() {
+    return Promise.using(db.getConnection(), createLoadTable)
+        .then((conn) => conn.query('SELECT * from ff_load') )
+        .then((rows) => {
+            return _.map(rows, (row) => {
+                return { id : row['id'], loadTime : row['load_time'] };
+            });
+        });
+}
+
+function getLatest() {
+    return Promise.using(db.getConnection(), createLoadTable)
+        .then((conn) => conn.query('SELECT * from ff_load order by load_time desc limit 1') )
+        .then((rows) => {
+            var row = rows[0];
+            return { id : row['id'], loadTime : row['load_time'] };
+        });
+}
+
 module.exports.createLoad = createLoad;
+module.exports.getAll = getAll;
+module.exports.getLatest = getLatest;
