@@ -13,7 +13,8 @@ const positionOrder = {
     "K" : 5,
     "DST" : 6,
     "D" : 7,
-    "DB" : 8
+    "DB" : 8,
+    "BN" : 9
 };
 
 function orderPositions(positions) {
