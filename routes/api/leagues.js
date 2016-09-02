@@ -4,6 +4,7 @@ const express = require('express'),
     leagues = require('../../libs/data/leagues'),
     rosterSettings = require('./league/roster_settings'),
     scoringSettings = require('./league/scoring_settings'),
+    vorSettings = require('./league/vor_settings'),
     projectionCalc = require('../../libs/proj-calc'),
     scoring = require('../../libs/data/scoring'),
     teams = require('./league/teams');
@@ -73,6 +74,7 @@ function leagueIdMiddlware(req, res, next) {
 router.use('/:name', leagueIdMiddlware);
 router.use('/:name/rosterSettings', rosterSettings);
 router.use('/:name/scoringSettings', scoringSettings);
+router.use('/:name/vorSettings', vorSettings);
 router.use('/:name/teams', teams);
 
 router.get('/:name/projections', (req, res) => {
