@@ -1,6 +1,7 @@
 'use strict';
 const express = require('express'),
     router = express.Router(),
+    _ = require('lodash'),
     leagues = require('../../libs/data/leagues'),
     rosterSettings = require('./league/roster_settings'),
     scoringSettings = require('./league/scoring_settings'),
@@ -77,12 +78,21 @@ router.use('/:name/scoringSettings', scoringSettings);
 router.use('/:name/vorSettings', vorSettings);
 router.use('/:name/teams', teams);
 
+function filterProjections(req, projections) {
+    if(req.query.position != null) {
+        projections = _.filter(projections, (proj) => proj.position == req.query.position);
+    }
+    if(req.query.maxVor != null) {
+        projections = _.filter(projections, (proj) => proj.vor < req.query.maxVor);
+    }
+    return projections;
+}
+
 router.get('/:name/projections', (req, res) => {
-    return projectionCalc.calcPlayerProjections(req.leagueId)
+    return projectionCalc.getLeagueProjections(req.leagueId)
         .then((projections) => {
-            projections = projections.sort((lhs, rhs) => {
-                return rhs.projectedPoints - lhs.projectedPoints;
-            });
+            projections = projections.sort((p1, p2) => p1.vor - p2.vor).reverse();
+            projections = filterProjections(req, projections);
             res.send(projections)
         })
         .error((err) => res.status(500).send(err));

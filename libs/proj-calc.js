@@ -4,6 +4,7 @@ const mysql = require('promise-mysql'),
     rawProjections = require('./data/ff/projections'),
     dataLoads = require('./data/ff/data-load'),
     scoring = require('./data/scoring'),
+    vor = require('./data/vor-base'),
     moment = require('moment'),
     _ = require('lodash');
 
@@ -64,11 +65,19 @@ const statToMultiMap = {
     returnYds: 'returnYardsPerPoint'
 };
 
+/**
+ * Return a promise containing the raw projections from the latest data load
+ */
 function latestProjections() {
     return dataLoads.getLatest()
         .then((dataLoad) => rawProjections.fetchProjections(dataLoad.id))
 }
 
+/**
+ * Given the scoring settings, calculate the multipliers to use for each statistic
+ *
+ * @param settings The scoring settings
+ */
 function calcMultipliers(settings) {
     _.each(Object.keys(settings), (key) => {
         if (key.includes('YardsPerPoint')) {
@@ -81,6 +90,11 @@ function calcMultipliers(settings) {
     return settings;
 }
 
+/**
+ *
+ * @param scoringSettings
+ * @returns {{}} A map of the player projection keys to what that value should be multiplied by
+ */
 function projToMultiplier(scoringSettings) {
     var multipliers = calcMultipliers(scoringSettings);
     var projMultiMap = {};
@@ -90,6 +104,12 @@ function projToMultiplier(scoringSettings) {
     return projMultiMap;
 }
 
+/**
+ *
+ * @param playerProjection
+ * @param projMultiMap
+ * @returns The projected points for the season for a player
+ */
 function calcProjectedPoints(playerProjection, projMultiMap) {
     return _.reduce(projMultiMap, (total, multiplier, projKey) => {
         var projectedStat = playerProjection[projKey];
@@ -98,25 +118,95 @@ function calcProjectedPoints(playerProjection, projMultiMap) {
     });
 }
 
-function calcPlayerProjections(leagueId) {
+/**
+ *
+ * @param scoringSettings
+ * @returns {Promise.<T>|*}
+ */
+function calcPlayerProjections(scoringSettings) {
+    var projMultiMap = projToMultiplier(scoringSettings);
+    return latestProjections()
+        .then((playerProjections) => {
+            return _.map(playerProjections, (playerProj) => {
+                var totalPoints = calcProjectedPoints(playerProj, projMultiMap);
+                return {
+                    player: playerProj.player,
+                    position: playerProj.position,
+                    team: playerProj.team,
+                    projectedPoints: totalPoints
+                }
+            });
+        });
+}
+
+function getPositionToPlayers(playerProjections) {
+    return _.reduce(playerProjections, (map, playerProj) => {
+        var pos = playerProj.position;
+        if(map[pos] == null) {
+            map[pos] = [];
+        }
+        map[pos].push(playerProj);
+        return map;
+    }, {});
+}
+
+function getPositionToOrderedProjections(positionToPlayers) {
+    return _.reduce(positionToPlayers, (map, players, pos) => {
+
+        var scores = _.map(players, (player) => player.projectedPoints);
+        scores = scores.sort((a, b) => a - b).reverse();
+        map[pos] = scores;
+        return map;
+    }, {});
+}
+
+function calcReplacementScoreByPosition(leagueId, playerProjections) {
+
+    var positionToPlayers = getPositionToPlayers(playerProjections);
+    var positionToOrderedScores = getPositionToOrderedProjections(positionToPlayers);
+
+    return vor.getVorBaselines(leagueId)
+        .then((rows) => {
+            return _.reduce(rows, (replacementScores, row) => {
+                var pos = row.position;
+                var baseline = row.baseline;
+                var orderedScores = positionToOrderedScores[pos];
+                var offset = Math.max(baseline - 1, 0);
+
+                var scoresToUse = _.take(_.slice(orderedScores, offset), 3);
+                console.log(pos, scoresToUse);
+
+                replacementScores[pos] = scoresToUse.reduce((a, b) => a + b) / 3;
+                console.log(pos, replacementScores[pos]);
+                return replacementScores;
+            }, {});
+        });
+}
+
+/**
+ *
+ * @param leagueId
+ * @returns {Promise.<T>|*}
+ */
+function getLeagueProjections(leagueId) {
     return scoring.getScoringSettings(leagueId)
-        .then((scoringSettings) => {
-            var projMultiMap = projToMultiplier(scoringSettings);
-            return latestProjections()
-                .then((playerProjections) => {
-                    return _.map(playerProjections, (playerProj) => {
-                        var totalPoints = calcProjectedPoints(playerProj, projMultiMap);
-                        return {
-                            player : playerProj.player,
-                            position : playerProj.position,
-                            team : playerProj.team,
-                            projectedPoints : totalPoints
-                        }
+        .then((scoringSettings) => { return calcPlayerProjections(scoringSettings); })
+        .then((playerProjections) => {
+            return calcReplacementScoreByPosition(leagueId, playerProjections)
+                .then((replacementScores) => {
+                    _.each(playerProjections, (player) => {
+                        var pos = player.position;
+                        var points = player.projectedPoints;
+                        var avgPlayerPoints = replacementScores[pos];
+
+                        player.vor = points - avgPlayerPoints;
                     });
+
+                    return playerProjections;
                 });
         });
 }
 
 module.exports.calcMultipliers = calcMultipliers;
 module.exports.projToMultiplier = projToMultiplier;
-module.exports.calcPlayerProjections = calcPlayerProjections;
+module.exports.getLeagueProjections = getLeagueProjections;
