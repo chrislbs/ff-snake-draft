@@ -10,7 +10,6 @@ const router = express.Router();
 router.post('/', function(request, response) {
 
     const player = request.body;
-    console.log(player);
     players.createPlayer(player)
         .then((playerId) => {
             player.id = playerId;

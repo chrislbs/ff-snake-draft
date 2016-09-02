@@ -125,7 +125,6 @@ function clearScoringSettings(connection, leagueId) {
 }
 
 function fetchSettings(connection, leagueId) {
-    console.log(leagueId);
     return connection.query('SELECT * from league_scoring where league_id = ?', [leagueId])
         .then((rows) => rows[0]);
 }

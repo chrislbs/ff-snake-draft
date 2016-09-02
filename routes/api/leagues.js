@@ -4,6 +4,8 @@ const express = require('express'),
     leagues = require('../../libs/data/leagues'),
     rosterSettings = require('./league/roster_settings'),
     scoringSettings = require('./league/scoring_settings'),
+    projectionCalc = require('../../libs/proj-calc'),
+    scoring = require('../../libs/data/scoring'),
     teams = require('./league/teams');
 
 /**
@@ -63,7 +65,6 @@ function leagueIdMiddlware(req, res, next) {
     var leagueName = req.params.name;
     leagues.findLeague(leagueName)
         .then((league) => {
-            console.log('middleware');
             req.leagueId = league.id;
             next();
         });
@@ -73,5 +74,16 @@ router.use('/:name', leagueIdMiddlware);
 router.use('/:name/rosterSettings', rosterSettings);
 router.use('/:name/scoringSettings', scoringSettings);
 router.use('/:name/teams', teams);
+
+router.get('/:name/projections', (req, res) => {
+    return projectionCalc.calcPlayerProjections(req.leagueId)
+        .then((projections) => {
+            projections = projections.sort((lhs, rhs) => {
+                return rhs.projectedPoints - lhs.projectedPoints;
+            });
+            res.send(projections)
+        })
+        .error((err) => res.status(500).send(err));
+});
 
 module.exports = router;

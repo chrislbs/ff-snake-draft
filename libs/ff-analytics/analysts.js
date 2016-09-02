@@ -101,7 +101,13 @@ function buildAnalyst(options = {}) {
 
 const myAnalysts = {
     Yahoo : analysts.Yahoo,
-    FantasyData : analysts.FantasyData
+    FantasyData : analysts.FantasyData,
+    FFToday : analysts.FFToday,
+    CBS : analysts.CBS,
+    WalterFootball : analysts.WalterFootball,
+    NFL : analysts.NFL,
+    FantasySharks: analysts.FantasySharks,
+    ESPN: analysts.ESPN
 };
 
 exports.all = _.map(myAnalysts, (a, name) => {
