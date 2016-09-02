@@ -98,4 +98,10 @@ router.get('/:name/projections', (req, res) => {
         .error((err) => res.status(500).send(err));
 });
 
+router.get('/:name/replacementProjections', (req, res) => {
+    return projectionCalc.getReplacementPlayerScoreByPosition(req.leagueId)
+        .then((replacementScores) => { res.send(replacementScores) })
+        .error((err) => res.status(500).send(err));
+});
+
 module.exports = router;

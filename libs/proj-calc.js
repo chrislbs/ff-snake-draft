@@ -174,10 +174,8 @@ function calcReplacementScoreByPosition(leagueId, playerProjections) {
                 var offset = Math.max(baseline - 1, 0);
 
                 var scoresToUse = _.take(_.slice(orderedScores, offset), 3);
-                console.log(pos, scoresToUse);
 
                 replacementScores[pos] = scoresToUse.reduce((a, b) => a + b) / 3;
-                console.log(pos, replacementScores[pos]);
                 return replacementScores;
             }, {});
         });
@@ -207,6 +205,15 @@ function getLeagueProjections(leagueId) {
         });
 }
 
+function getReplacementPlayerScoreByPosition(leagueId) {
+    return scoring.getScoringSettings(leagueId)
+        .then((scoringSettings) => { return calcPlayerProjections(scoringSettings); })
+        .then((playerProjections) => {
+            return calcReplacementScoreByPosition(leagueId, playerProjections);
+        });
+}
+
 module.exports.calcMultipliers = calcMultipliers;
 module.exports.projToMultiplier = projToMultiplier;
 module.exports.getLeagueProjections = getLeagueProjections;
+module.exports.getReplacementPlayerScoreByPosition = getReplacementPlayerScoreByPosition;
