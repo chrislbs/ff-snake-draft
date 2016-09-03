@@ -20,7 +20,7 @@ ReactDOM.render(
         <Route path="/leagues/:leagueName/rosterSettings" component={League} settings="roster" />
         <Route path="/leagues/:leagueName/scoringSettings" component={League} settings="scoring" />
         <Route path="/leagues/:leagueName/vorSettings" component={League} settings="vor" />
-        <Route path="/leagues/:leagueName/teams" component={League} />
+        <Route path="/leagues/:leagueName/teams" component={League} settings="teams" />
         <Route path="/leagues/:leagueName/projections" component={League} settings="projections" />
     </Router>,
     document.getElementById('content')
