@@ -1,6 +1,5 @@
 'use strict';
 const React = require('react'),
-    Promise = require('bluebird'),
     fetch = require('isomorphic-fetch');
 
 var PlayerListRow = React.createClass({
@@ -40,7 +39,7 @@ var PlayersList = React.createClass({
     componentDidMount : function() {
         // lol how do i this?
         var comp = this;
-        fetch(`/api/leagues/${this.props.params.leagueName}/projections`)
+        fetch(`/api/leagues/${this.props.leagueName}/projections`)
             .then((response) => {
                 console.log(response.status);
                 if(response.status == 200) {

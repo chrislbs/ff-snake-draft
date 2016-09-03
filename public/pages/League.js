@@ -4,9 +4,10 @@ const React = require('react'),
     LeagueRosterSettings = require('../components/LeagueRosterSettings'),
     LeagueScoringSettings = require('../components/LeagueScoringSettings'),
     LeagueVorSettings = require('../components/LeagueVorSettings'),
+    LeagueProjections = require('../components/LeagueProjections'),
     LeagueSettingsNav = require('../components/LeagueSettingsNav');
 
-var LeagueSettings = React.createClass({
+var League = React.createClass({
     render : function() {
 
         var leagueName=this.props.params.leagueName;
@@ -23,6 +24,9 @@ var LeagueSettings = React.createClass({
         else if (settings == 'vor') {
             content = (<LeagueVorSettings leagueName={leagueName} />)
         }
+        else if (settings == 'projections') {
+            content = (<LeagueProjections leagueName={leagueName} />)
+        }
 
         return (
             <div>
@@ -35,4 +39,4 @@ var LeagueSettings = React.createClass({
     }
 });
 
-module.exports = LeagueSettings;
+module.exports = League;

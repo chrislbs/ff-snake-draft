@@ -3,8 +3,7 @@ const React = require('react'),
     Router = require('react-router').Router,
     Route = require('react-router').Route,
     browserHistory = require('react-router').browserHistory,
-    PlayersList = require('./components/PlayersList'),
-    LeagueSettings = require('./pages/LeagueSettings'),
+    League = require('./pages/League'),
     ChooseLeague = require('./pages/ChooseLeague');
 
 var App = React.createClass({
@@ -17,12 +16,12 @@ var App = React.createClass({
 ReactDOM.render(
     <Router history={browserHistory}>
         <Route path="/" component={App} />
-        <Route path="/leagues/:leagueName" component={LeagueSettings} />
-        <Route path="/leagues/:leagueName/rosterSettings" component={LeagueSettings} settings="roster" />
-        <Route path="/leagues/:leagueName/scoringSettings" component={LeagueSettings} settings="scoring" />
-        <Route path="/leagues/:leagueName/vorSettings" component={LeagueSettings} settings="vor" />
-        <Route path="/leagues/:leagueName/teams" component={LeagueSettings} />
-        <Route path="/leagues/:leagueName/projections" component={PlayersList} />
+        <Route path="/leagues/:leagueName" component={League} />
+        <Route path="/leagues/:leagueName/rosterSettings" component={League} settings="roster" />
+        <Route path="/leagues/:leagueName/scoringSettings" component={League} settings="scoring" />
+        <Route path="/leagues/:leagueName/vorSettings" component={League} settings="vor" />
+        <Route path="/leagues/:leagueName/teams" component={League} />
+        <Route path="/leagues/:leagueName/projections" component={League} settings="projections" />
     </Router>,
     document.getElementById('content')
 );

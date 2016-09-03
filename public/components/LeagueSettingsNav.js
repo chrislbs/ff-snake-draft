@@ -11,6 +11,7 @@ var LeagueSettingsNav = React.createClass({
         var scoringSettings = prefix + "scoringSettings";
         var vorSettings = prefix + "vorSettings";
         var teams = prefix + "teams";
+        var projections = prefix + "projections";
         return (
             <ul>
                 <li>
@@ -27,6 +28,9 @@ var LeagueSettingsNav = React.createClass({
                 </li>
                 <li>
                     <Link to={teams} activeClassName="active">Teams</Link>
+                </li>
+                <li>
+                    <Link to={projections} activeClassName="active">Projections</Link>
                 </li>
             </ul>
         )
