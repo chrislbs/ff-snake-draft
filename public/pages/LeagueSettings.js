@@ -3,6 +3,7 @@
 const React = require('react'),
     LeagueRosterSettings = require('../components/LeagueRosterSettings'),
     LeagueScoringSettings = require('../components/LeagueScoringSettings'),
+    LeagueVorSettings = require('../components/LeagueVorSettings'),
     LeagueSettingsNav = require('../components/LeagueSettingsNav');
 
 var LeagueSettings = React.createClass({
@@ -18,6 +19,9 @@ var LeagueSettings = React.createClass({
         }
         else if (settings == 'scoring') {
             content = (<LeagueScoringSettings leagueName={leagueName} />)
+        }
+        else if (settings == 'vor') {
+            content = (<LeagueVorSettings leagueName={leagueName} />)
         }
 
         return (
