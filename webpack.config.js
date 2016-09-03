@@ -6,8 +6,7 @@ module.exports = {
     },
     output: {
         path: './public/js',
-        filename: 'app.js',
-        publicPath: '/'
+        filename: 'app.js'
     },
     module: {
         preLoaders: [

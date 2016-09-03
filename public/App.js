@@ -1,28 +1,23 @@
 const React = require('react'),
     ReactDOM = require('react-dom'),
-    PlayersList = require('./components/PlayersList'),
-    $ = require('jquery');
+    ChooseLeague = require('./pages/ChooseLeague');
 
 var App = React.createClass({
     // on component load
     getInitialState : function() {
-        return { page : 'landing', players : [] };
+        return { page : 'league' };
     },
     // after first render
     componentDidMount : function() {
-        console.log('hello');
-        $.ajax({
-            url: '/api/leagues/test/projections',
-            dataType: 'json',
-            cache : false,
-            success: function(players) {
-                this.setState({players : players});
-            }.bind(this)
-        })
     },
     render : function() {
-        console.log('hello render');
-        return (<PlayersList players={this.state.players} />);
+        console.log(this.state);
+        if (this.state.page == 'league') {
+            return (<ChooseLeague />);
+        }
+        else {
+            return ('<h3>Whoops!</h3>');
+        }
     }
 });
 
