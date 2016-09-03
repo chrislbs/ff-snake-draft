@@ -8,28 +8,14 @@ var Draft = React.createClass({
     render : function() {
 
         console.log('render draft');
-        var leagueName=this.props.params.leagueName;
-        var settings=this.props.route.settings;
-
-        var content = null;
-        if (settings == 'draftOrder')
-        {
-            content = (<div>Hello Draft Order</div>)
-        }
-        else
-        {
-            content = (<div>Unknown Draft Page</div>)
-        }
+        var leagueName=this.props.leagueName;
 
         return (
-            <div>
-                <LeagueSettingsNav leagueName={leagueName}/>
-                <div id="draftDiv">
-                    <hr />
-                    <DraftNav leagueName={leagueName}/>
-                    <div>
-                        {content}
-                    </div>
+            <div id="draftDiv">
+                <hr />
+                <DraftNav leagueName={leagueName}/>
+                <div>
+                    {this.props.children}
                 </div>
             </div>
         )

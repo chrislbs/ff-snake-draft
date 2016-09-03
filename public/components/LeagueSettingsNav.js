@@ -12,7 +12,7 @@ var LeagueSettingsNav = React.createClass({
         var vorSettings = prefix + "vorSettings";
         var teams = prefix + "teams";
         var projections = prefix + "projections";
-        var draft = prefix + "draft/draftOrder";
+        var draft = prefix + "draft";
         return (
             <div id="leagueNav" className="u-full-width">
                 <div>

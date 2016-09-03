@@ -3,8 +3,13 @@ const React = require('react'),
     Router = require('react-router').Router,
     Route = require('react-router').Route,
     browserHistory = require('react-router').browserHistory,
-    League = require('./pages/League'),
     Draft = require('./pages/Draft'),
+    LeagueRosterSettings = require('./components/LeagueRosterSettings'),
+    LeagueScoringSettings = require('./components/LeagueScoringSettings'),
+    LeagueVorSettings = require('./components/LeagueVorSettings'),
+    LeagueProjections = require('./components/LeagueProjections'),
+    LeagueTeams = require('./components/LeagueTeams'),
+    LeagueRoot = require('./pages/LeagueRoot'),
     ChooseLeague = require('./pages/ChooseLeague');
 
 var App = React.createClass({
@@ -13,17 +18,18 @@ var App = React.createClass({
     }
 });
 
-// explicitly specifying routes because I was struggling to get nested routers working
 ReactDOM.render(
     <Router history={browserHistory}>
         <Route path="/" component={App} />
-        <Route path="/leagues/:leagueName" component={League} />
-        <Route path="/leagues/:leagueName/rosterSettings" component={League} settings="roster" />
-        <Route path="/leagues/:leagueName/scoringSettings" component={League} settings="scoring" />
-        <Route path="/leagues/:leagueName/vorSettings" component={League} settings="vor" />
-        <Route path="/leagues/:leagueName/teams" component={League} settings="teams" />
-        <Route path="/leagues/:leagueName/projections" component={League} settings="projections" />
-        <Route path="/leagues/:leagueName/draft/draftOrder" component={Draft} settings="draftOrder" />
+        <Route path="/leagues/:leagueName" component={LeagueRoot}>
+            <Route path="rosterSettings" component={LeagueRosterSettings} />
+            <Route path="scoringSettings" component={LeagueScoringSettings} />
+            <Route path="vorSettings" component={LeagueVorSettings} />
+            <Route path="teams" component={LeagueTeams}/>
+            <Route path="projections" component={LeagueProjections} />
+            <Route path="draft" component={Draft}>
+            </Route>
+        </Route>
     </Router>,
     document.getElementById('content')
 );
