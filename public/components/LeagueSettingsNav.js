@@ -12,27 +12,31 @@ var LeagueSettingsNav = React.createClass({
         var vorSettings = prefix + "vorSettings";
         var teams = prefix + "teams";
         var projections = prefix + "projections";
+        var draft = prefix + "draft/draftOrder";
         return (
-            <ul>
-                <li>
+            <div id="leagueNav" className="u-full-width">
+                <div>
                     <Link to="/" activeClassName="active">Home</Link>
-                </li>
-                <li>
+                </div>
+                <div>
                     <Link to={rosterSettings} activeClassName="active">Roster Settings</Link>
-                </li>
-                <li>
+                </div>
+                <div>
                     <Link to={scoringSettings} activeClassName="active">Scoring Settings</Link>
-                </li>
-                <li>
+                </div>
+                <div>
                     <Link to={vorSettings} activeClassName="active">VOR Settings</Link>
-                </li>
-                <li>
+                </div>
+                <div>
                     <Link to={teams} activeClassName="active">Teams</Link>
-                </li>
-                <li>
+                </div>
+                <div>
                     <Link to={projections} activeClassName="active">Projections</Link>
-                </li>
-            </ul>
+                </div>
+                <div>
+                    <Link to={draft} activeClassName="active">Draft</Link>
+                </div>
+            </div>
         )
     }
 });

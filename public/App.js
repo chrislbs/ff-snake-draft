@@ -4,6 +4,7 @@ const React = require('react'),
     Route = require('react-router').Route,
     browserHistory = require('react-router').browserHistory,
     League = require('./pages/League'),
+    Draft = require('./pages/Draft'),
     ChooseLeague = require('./pages/ChooseLeague');
 
 var App = React.createClass({
@@ -22,6 +23,7 @@ ReactDOM.render(
         <Route path="/leagues/:leagueName/vorSettings" component={League} settings="vor" />
         <Route path="/leagues/:leagueName/teams" component={League} settings="teams" />
         <Route path="/leagues/:leagueName/projections" component={League} settings="projections" />
+        <Route path="/leagues/:leagueName/draft/draftOrder" component={Draft} settings="draftOrder" />
     </Router>,
     document.getElementById('content')
 );

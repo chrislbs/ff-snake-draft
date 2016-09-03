@@ -6,6 +6,7 @@ const React = require('react'),
     LeagueVorSettings = require('../components/LeagueVorSettings'),
     LeagueProjections = require('../components/LeagueProjections'),
     LeagueTeams = require('../components/LeagueTeams'),
+    Draft = require('../pages/Draft'),
     LeagueSettingsNav = require('../components/LeagueSettingsNav');
 
 var League = React.createClass({
@@ -30,6 +31,9 @@ var League = React.createClass({
         }
         else if (settings == 'teams') {
             content = (<LeagueTeams leagueName={leagueName} />)
+        }
+        else {
+            content = (<div>Unknown Page</div>)
         }
 
         return (
