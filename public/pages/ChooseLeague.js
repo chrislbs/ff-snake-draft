@@ -1,8 +1,9 @@
 'use strict';
 const React = require('react'),
-    fetch = require('isomorphic-fetch');
+    fetch = require('isomorphic-fetch'),
+    browserHistory = require('react-router').browserHistory;
 
-var LeagueContainer = React.createClass({
+var ChooseLeague = React.createClass({
     getInitialState : function() {
         return { league : '' };
     },
@@ -12,21 +13,28 @@ var LeagueContainer = React.createClass({
     handleGoExisting : function(e) {
         e.preventDefault();
         e.stopPropagation();
+        browserHistory.push(`/projections/${this.state.league.trim()}`);
     },
     handleCreateNew : function(e) {
         e.preventDefault();
         e.stopPropagation();
         // this should navigate me to a new page
-        //fetch('/api/leagues', {
-        //    method: 'POST',
-        //    headers: {
-        //        'Accept': 'application/json',
-        //        'Content-Type': 'application/json'
-        //    },
-        //    body: JSON.stringify({
-        //        name: this.state.league
-        //    })
-        //})
+        var league = this.state.league.trim();
+        fetch('/api/leagues', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: league
+            })
+        })
+        .then((response) => {
+            if (response.status == 200) {
+                this.props.history.push(`/projections/${league}`);
+            }
+        });
     },
     render : function() {
         return (
@@ -48,4 +56,4 @@ var LeagueContainer = React.createClass({
     }
 });
 
-module.exports = LeagueContainer;
+module.exports = ChooseLeague;

@@ -1,4 +1,7 @@
-const React = require('react');
+'use strict';
+const React = require('react'),
+    Promise = require('bluebird'),
+    fetch = require('isomorphic-fetch');
 
 var PlayerListRow = React.createClass({
     render : function() {
@@ -31,15 +34,31 @@ var PlayerListHeader = React.createClass({
 });
 
 var PlayersList = React.createClass({
+    getInitialState : function() {
+        return { players: [] }
+    },
+    componentDidMount : function() {
+        // lol how do i this?
+        var comp = this;
+        fetch(`/api/leagues/${this.props.params.leagueName}/projections`)
+            .then((response) => {
+                console.log(response.status);
+                if(response.status == 200) {
+                    response.json().then((json) => {
+                        comp.setState({players : json});
+                    });
+                }
+            });
+    },
     render : function() {
-
-        var playerRows = this.props.players.map((player) => {
+        console.log(this.state);
+        var playerRows = this.state.players.map((player) => {
             return (
-                <PlayerListRow player={player} />
+                <PlayerListRow player={player} key={player.player + player.team} />
             )
         });
         return (
-            <table class="u-full-width">
+            <table className="u-full-width">
                 <PlayerListHeader />
                 <tbody>
                 {playerRows}
