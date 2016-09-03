@@ -14,6 +14,9 @@ var LeagueSettingsNav = React.createClass({
         return (
             <ul>
                 <li>
+                    <Link to="/" activeClassName="active">Home</Link>
+                </li>
+                <li>
                     <Link to={rosterSettings} activeClassName="active">Roster Settings</Link>
                 </li>
                 <li>

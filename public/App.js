@@ -18,7 +18,7 @@ ReactDOM.render(
     <Router history={browserHistory}>
         <Route path="/" component={App} />
         <Route path="/leagues/:leagueName" component={LeagueSettings} />
-        <Route path="/leagues/:leagueName/rosterSettings" component={LeagueSettings} />
+        <Route path="/leagues/:leagueName/rosterSettings" component={LeagueSettings} settings="roster" />
         <Route path="/leagues/:leagueName/scoringSettings" component={LeagueSettings} />
         <Route path="/leagues/:leagueName/vorSettings" component={LeagueSettings} />
         <Route path="/leagues/:leagueName/teams" component={LeagueSettings} />
