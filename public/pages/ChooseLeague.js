@@ -13,7 +13,7 @@ var ChooseLeague = React.createClass({
     handleGoExisting : function(e) {
         e.preventDefault();
         e.stopPropagation();
-        browserHistory.push(`/projections/${this.state.league.trim()}`);
+        browserHistory.push(`/leagues/${this.state.league.trim()}`);
     },
     handleCreateNew : function(e) {
         e.preventDefault();
@@ -32,7 +32,7 @@ var ChooseLeague = React.createClass({
         })
         .then((response) => {
             if (response.status == 200) {
-                this.props.history.push(`/projections/${league}`);
+                this.props.history.push(`/leagues/${league}`);
             }
         });
     },

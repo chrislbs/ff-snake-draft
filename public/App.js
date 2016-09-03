@@ -4,35 +4,25 @@ const React = require('react'),
     Route = require('react-router').Route,
     browserHistory = require('react-router').browserHistory,
     PlayersList = require('./components/PlayersList'),
+    LeagueSettings = require('./pages/LeagueSettings'),
     ChooseLeague = require('./pages/ChooseLeague');
 
 var App = React.createClass({
-    // on component load
-    getInitialState : function() {
-        return { page : 'league' };
-    },
-    // after first render
-    componentDidMount : function() {
-    },
-    handleNavLeague : function(leagueName) {
-        var state = { page : 'leagueSettings', league : leagueName };
-        this.setState(state);
-    },
-    render : function() {
-        console.log(this.state);
-        if (this.state.page == 'league') {
-            return (<ChooseLeague goToLeague={this.handleNavLeague} />);
-        }
-        else {
-            return (<h3>Whoops!</h3>);
-        }
+    render: function () {
+        return (<ChooseLeague />);
     }
 });
 
+// explicitly specifying routes because I was struggling to get nested routers working
 ReactDOM.render(
     <Router history={browserHistory}>
         <Route path="/" component={App} />
-        <Route path="/projections/:leagueName" component={PlayersList} />
+        <Route path="/leagues/:leagueName" component={LeagueSettings} />
+        <Route path="/leagues/:leagueName/rosterSettings" component={LeagueSettings} />
+        <Route path="/leagues/:leagueName/scoringSettings" component={LeagueSettings} />
+        <Route path="/leagues/:leagueName/vorSettings" component={LeagueSettings} />
+        <Route path="/leagues/:leagueName/teams" component={LeagueSettings} />
+        <Route path="/leagues/:leagueName/projections" component={PlayersList} />
     </Router>,
     document.getElementById('content')
 );
