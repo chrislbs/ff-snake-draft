@@ -10,12 +10,19 @@ var Draft = React.createClass({
         console.log('render draft');
         var leagueName=this.props.leagueName;
 
+        var childrenWithProps = React.Children.map(this.props.children,
+            (child) => {
+                return React.cloneElement(child, {
+                    leagueName : leagueName
+                });
+            });
+
         return (
             <div id="draftDiv">
                 <hr />
                 <DraftNav leagueName={leagueName}/>
                 <div>
-                    {this.props.children}
+                    {childrenWithProps}
                 </div>
             </div>
         )
