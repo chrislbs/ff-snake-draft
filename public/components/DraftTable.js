@@ -24,6 +24,19 @@ const RankCell = ({rowIndex}) => (
     </Cell>
 );
 
+const ButtonCell = React.createClass({
+    onButtonClick : function(e) {
+        this.props.onPick(this.props.rowIndex);
+    },
+    render : function() {
+        return (
+            <Cell>
+                <input type="button" value="Pick" onClick={this.onButtonClick} />
+            </Cell>
+        )
+    }
+});
+
 class DataList {
     constructor(data) {
         this._data = data;
@@ -56,52 +69,127 @@ class DataWrapper {
 
 var DraftTable = React.createClass({
     getInitialState : function() {
-        return { players : new DataList([]), filteredList : new DataList([]) }
+        return {
+            players : new DataList([]),
+            filteredList : new DataList([]),
+            namePredicate : this.alwaysTruePredicate,
+            pickedPlayerPredicate : this.alwaysTruePredicate
+        }
     },
-    filterPlayers : function(players) {
+    alwaysTruePredicate : function(player) {
+        return true;
+    },
+    filterNoProjections : function(players) {
         return _.filter(players, (p) => p.projectedPoints > 0);
+    },
+    fetchPickedPlayers : function() {
+        return fetch(`/api/leagues/${this.props.leagueName}/draft/allPicks`)
+            .then((response) => response.json())
+            .then((pickList) => {
+                var pred = function(player) {
+                    var index = _.findIndex(pickList, (pickedPlayer) => {
+                        return pickedPlayer.playerName == player.player &&
+                                pickedPlayer.teamName == player.team;
+                    });
+
+                    return index == -1;
+                };
+                var newState = update(this.state, {
+                    pickedPlayerPredicate : { $set : pred }
+                });
+                this.setState(newState);
+            })
+            .then(() => this.updateFilteredList());
     },
     componentDidMount : function() {
         fetch(`/api/leagues/${this.props.leagueName}/projections`)
             .then((response) => response.json())
             .then((players) => {
-                players = this.filterPlayers(players);
+                players = this.filterNoProjections(players);
                 var playerList = new DataList(players);
                 var newState = update(this.state, {
-                    players : { $set : playerList},
-                    filteredList: { $set : playerList }
+                    players : { $set : playerList}
                 });
                 this.setState(newState);
-            });
+            })
+            .then(() => this.fetchPickedPlayers());
     },
     onPlayerFilter : function(e) {
 
-        var updatedList = this.state.players;
+        var pred = null;
         if(e.target.value)
         {
             var partialName = e.target.value.toLowerCase();
-            var size = this.state.players.getSize();
-            var filteredIndexes = [];
-            for(var index = 0; index < size; index++) {
-                var {player} = this.state.players.getAt(index);
-                if(player.toLowerCase().indexOf(partialName) !== -1) {
-                    filteredIndexes.push(index);
-                }
-            }
-            updatedList = new DataWrapper(filteredIndexes, this.state.players);
+            pred = function(p) {
+                return p.player.toLowerCase().indexOf(partialName) !== -1;
+            };
         }
+        else {
+            pred = this.alwaysTruePredicate;
+        }
+
         var newState = update(this.state, {
-            filteredList: { $set : updatedList }
+            namePredicate : { $set : pred }
+        });
+        this.setState(newState, function() {
+            this.updateFilteredList();
+        });
+    },
+    onPick : function(rowIndex) {
+        var player = this.state.filteredList.getAt(rowIndex);
+        fetch(`/api/leagues/${this.props.leagueName}/draft/pick`,
+            {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    playerName : player.player,
+                    teamName : player.team
+                })
+            })
+            .then((response) => response.json())
+            .then((pickInfo) => {
+                console.log('player picked', pickInfo);
+                return this.fetchPickedPlayers();
+            });
+    },
+    updateFilteredList : function() {
+        var dataList = this.state.players;
+        var size = dataList.getSize();
+        var filteredIndexes = [];
+        for (var index = 0; index < size; index++) {
+            var player = dataList.getAt(index);
+            if (this.state.namePredicate(player) &&
+                this.state.pickedPlayerPredicate(player)) {
+                filteredIndexes.push(index);
+            }
+        }
+        dataList = new DataWrapper(filteredIndexes, this.state.players);
+        var newState = update(this.state, {
+            filteredList : { $set : dataList}
         });
         this.setState(newState);
+    },
+    undoLastPick : function(e) {
+        fetch(`/api/leagues/${this.props.leagueName}/draft/undoLastPick`,
+            {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then((response) => this.fetchPickedPlayers());
     },
     render : function() {
 
         var dataList = this.state.filteredList;
-        console.log(dataList);
         return (
             <div>
                 <input type="text" onChange={this.onPlayerFilter} placeholder="Filter by Name" />
+                <input type="button" onClick={this.undoLastPick} value="Undo Last" />
                 <br />
                 <Table
                     rowHeight={50}
@@ -138,13 +226,18 @@ var DraftTable = React.createClass({
                         header={<Cell>Projected</Cell>}
                         cell={<NumCell data={dataList} col="projectedPoints" />}
                         fixed={true}
-                        width={200}
+                        width={125}
                     />
                     <Column
                         header={<Cell>VOR</Cell>}
                         cell={<NumCell data={dataList} col="vor" />}
                         fixed={true}
-                        width={200}
+                        width={125}
+                    />
+                    <Column
+                        cell={<ButtonCell onPick={this.onPick} />}
+                        fixed={true}
+                        width={150}
                     />
 
                 </Table>
