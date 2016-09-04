@@ -6,6 +6,7 @@ const express = require('express'),
     rosterSettings = require('./league/roster_settings'),
     scoringSettings = require('./league/scoring_settings'),
     vorSettings = require('./league/vor_settings'),
+    draftOrder = require('./league/draft_order'),
     projectionCalc = require('../../libs/proj-calc'),
     scoring = require('../../libs/data/scoring'),
     teams = require('./league/teams');
@@ -77,6 +78,7 @@ router.use('/:name/rosterSettings', rosterSettings);
 router.use('/:name/scoringSettings', scoringSettings);
 router.use('/:name/vorSettings', vorSettings);
 router.use('/:name/teams', teams);
+router.use('/:name/draft/order', draftOrder);
 
 function filterProjections(req, projections) {
     if(req.query.position != null) {

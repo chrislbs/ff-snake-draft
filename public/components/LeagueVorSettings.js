@@ -5,7 +5,7 @@ const React = require('react'),
     _ = require('lodash');
 
 const validPositions = [
-    "QB", "RB", "WR", "TE", "K", "DL", "LB", "DB"
+    "QB", "RB", "WR", "TE", "K", "DL", "LB", "DB", "D"
 ];
 
 var VorRow = React.createClass({
@@ -34,6 +34,18 @@ var LeagueVorSettings = React.createClass({
                 var leaguePositions = _.filter(
                     Array.from(new Set(json)),
                     (pos) => validPositions.includes(pos));
+
+                leaguePositions = _.map(leaguePositions, (pos) => {
+                    if(pos == 'D') {
+                        return ['DL', 'LB'];
+                    }
+                    else {
+                        return pos;
+                    }
+                });
+
+                leaguePositions = _.flatten(leaguePositions);
+
                 var newState = update(comp.state, {
                     leaguePositions : { $set : leaguePositions}
                 });

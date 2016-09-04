@@ -5,6 +5,7 @@ const React = require('react'),
     browserHistory = require('react-router').browserHistory,
     Draft = require('./pages/Draft'),
     DraftTable = require('./components/DraftTable'),
+    DraftOrder = require('./components/DraftOrder'),
     LeagueRosterSettings = require('./components/LeagueRosterSettings'),
     LeagueScoringSettings = require('./components/LeagueScoringSettings'),
     LeagueVorSettings = require('./components/LeagueVorSettings'),
@@ -30,6 +31,7 @@ ReactDOM.render(
             <Route path="projections" component={LeagueProjections} />
             <Route path="draft" component={Draft}>
                 <Route path="players" component={DraftTable} />
+                <Route path="draftOrder" component={DraftOrder} />
             </Route>
         </Route>
     </Router>,
