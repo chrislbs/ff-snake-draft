@@ -37,6 +37,35 @@ const ButtonCell = React.createClass({
     }
 });
 
+const PositionFilter = React.createClass({
+    handleOnChange : function(e) {
+        var positions = [e.target.value.trim()];
+        if(e.target.value.trim() == 'D')
+        {
+            positions = ['DL','LB'];
+        }
+        if(e.target.value.trim() == 'All')
+        {
+            positions = null;
+        }
+        this.props.onFilterPosition(positions);
+    },
+    render : function() {
+        return (
+            <select onChange={this.handleOnChange}>
+                <option value="All">All</option>
+                <option value="QB">QB</option>
+                <option value="WR">WR</option>
+                <option value="RB">RB</option>
+                <option value="TE">TE</option>
+                <option value="K">K</option>
+                <option value="D">D</option>
+                <option value="DB">DB</option>
+            </select>
+        )
+    }
+});
+
 class DataList {
     constructor(data) {
         this._data = data;
@@ -73,14 +102,21 @@ var DraftTable = React.createClass({
             players : new DataList([]),
             filteredList : new DataList([]),
             namePredicate : this.alwaysTruePredicate,
-            pickedPlayerPredicate : this.alwaysTruePredicate
+            pickedPlayerPredicate : this.alwaysTruePredicate,
+            positionPredicate : this.alwaysTruePredicate
         }
+    },
+    notDstPredicate : function(player) {
+        return player.position != 'DST';
     },
     alwaysTruePredicate : function(player) {
         return true;
     },
     filterNoProjections : function(players) {
         return _.filter(players, (p) => p.projectedPoints > 0);
+    },
+    filterDst : function(players) {
+        return _.filter(players, (p) => p.position != 'DST');
     },
     fetchPickedPlayers : function() {
         return fetch(`/api/leagues/${this.props.leagueName}/draft/allPicks`)
@@ -106,6 +142,7 @@ var DraftTable = React.createClass({
             .then((response) => response.json())
             .then((players) => {
                 players = this.filterNoProjections(players);
+                players = this.filterDst(players);
                 var playerList = new DataList(players);
                 var newState = update(this.state, {
                     players : { $set : playerList}
@@ -130,6 +167,29 @@ var DraftTable = React.createClass({
 
         var newState = update(this.state, {
             namePredicate : { $set : pred }
+        });
+        this.setState(newState, function() {
+            this.updateFilteredList();
+        });
+    },
+    onFilterPosition : function(positions) {
+        var pred;
+        if(positions == null) {
+            pred = this.alwaysTruePredicate;
+        }
+        else {
+            pred = function(player) {
+                return positions.includes(player.position);
+            }
+        }
+
+        //var dstPred = this.notDstPredicate;
+        //var actual = function(player) {
+        //    return dstPred(player) && pred(pred);
+        //};
+
+        var newState = update(this.state, {
+            positionPredicate : { $set : pred }
         });
         this.setState(newState, function() {
             this.updateFilteredList();
@@ -162,9 +222,16 @@ var DraftTable = React.createClass({
         for (var index = 0; index < size; index++) {
             var player = dataList.getAt(index);
             if (this.state.namePredicate(player) &&
-                this.state.pickedPlayerPredicate(player)) {
+                this.state.pickedPlayerPredicate(player) &&
+                this.state.positionPredicate(player))
+            {
                 filteredIndexes.push(index);
             }
+            //if (this.state.namePredicate(player) &&
+            //    this.state.pickedPlayerPredicate(player))
+            //{
+            //    filteredIndexes.push(index);
+            //}
         }
         dataList = new DataWrapper(filteredIndexes, this.state.players);
         var newState = update(this.state, {
@@ -189,6 +256,7 @@ var DraftTable = React.createClass({
         return (
             <div>
                 <input type="text" onChange={this.onPlayerFilter} placeholder="Filter by Name" />
+                <PositionFilter onFilterPosition={this.onFilterPosition} />
                 <input type="button" onClick={this.undoLastPick} value="Undo Last" />
                 <br />
                 <Table

@@ -18,7 +18,7 @@
     text-align: left;
 }
 
-#draftNav div {
+#draftNav a {
     display: inline-block;
     padding: .5em;
 }
