@@ -81,6 +81,7 @@ function parseCsvData(jsonResponse, callback) {
     var csvData = csvJson['CsvData'];
 
     console.log('Starting parsing');
+    console.log(csvData);
     csvParse(csvData, { columns : true }, (err, output) => {
         console.log('Completed parsing');
         callback(err, output);

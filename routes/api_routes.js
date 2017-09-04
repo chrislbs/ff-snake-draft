@@ -5,8 +5,11 @@ const express = require('express'),
     bodyParser = require('body-parser'),
     playersApi = require('./api/players'),
     leaguesApi = require('./api/leagues'),
+    projections = require('./api/projections'),
     ff = require('./api/ffraw');
 
+
+router.use('/projections', projections);
 
 router.use(bodyParser.json());
 

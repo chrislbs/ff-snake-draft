@@ -1,8 +1,8 @@
 'use strict';
 
 const mysql = require('promise-mysql'),
-    rawProjections = require('./data/ff/projections'),
-    dataLoads = require('./data/ff/data-load'),
+    projData = require('./data/projection_data'),
+    projSet = require('./data/projection_set'),
     scoring = require('./data/scoring'),
     vor = require('./data/vor-base'),
     moment = require('moment'),
@@ -69,8 +69,7 @@ const statToMultiMap = {
  * Return a promise containing the raw projections from the latest data load
  */
 function latestProjections() {
-    return dataLoads.getLatest()
-        .then((dataLoad) => rawProjections.fetchProjections(dataLoad.id))
+    return projSet.getLatest().then((dataLoad) => projData.fetchProjections(dataLoad.id));
 }
 
 /**
@@ -112,8 +111,10 @@ function projToMultiplier(scoringSettings) {
  */
 function calcProjectedPoints(playerProjection, projMultiMap) {
     return _.reduce(projMultiMap, (total, multiplier, projKey) => {
-        var projectedStat = playerProjection[projKey];
-        total += projectedStat * multiplier;
+        let projectedStat = playerProjection[projKey];
+        if (projectedStat != null) {
+            total += projectedStat * multiplier;
+        }
         return total;
     });
 }
@@ -124,13 +125,13 @@ function calcProjectedPoints(playerProjection, projMultiMap) {
  * @returns {Promise.<T>|*}
  */
 function calcPlayerProjections(scoringSettings) {
-    var projMultiMap = projToMultiplier(scoringSettings);
+    let projMultiMap = projToMultiplier(scoringSettings);
     return latestProjections()
         .then((playerProjections) => {
             return _.map(playerProjections, (playerProj) => {
-                var totalPoints = calcProjectedPoints(playerProj, projMultiMap);
+                let totalPoints = calcProjectedPoints(playerProj, projMultiMap);
                 return {
-                    player: playerProj.player,
+                    player: `${playerProj.firstName} ${playerProj.lastName}`,
                     position: playerProj.position,
                     team: playerProj.team,
                     projectedPoints: totalPoints
@@ -162,20 +163,22 @@ function getPositionToOrderedProjections(positionToPlayers) {
 
 function calcReplacementScoreByPosition(leagueId, playerProjections) {
 
-    var positionToPlayers = getPositionToPlayers(playerProjections);
-    var positionToOrderedScores = getPositionToOrderedProjections(positionToPlayers);
+    let positionToPlayers = getPositionToPlayers(playerProjections);
+    let positionToOrderedScores = getPositionToOrderedProjections(positionToPlayers);
 
     return vor.getVorBaselines(leagueId)
         .then((rows) => {
             return _.reduce(rows, (replacementScores, row) => {
-                var pos = row.position;
-                var baseline = row.baseline;
-                var orderedScores = positionToOrderedScores[pos];
-                var offset = Math.max(baseline - 1, 0);
+                let pos = row.position;
+                let baseline = row.baseline;
+                let orderedScores = positionToOrderedScores[pos];
 
-                var scoresToUse = _.take(_.slice(orderedScores, offset), 3);
+                if (orderedScores != null) {
+                    let offset = Math.max(baseline - 1, 0);
+                    let scoresToUse = _.take(_.slice(orderedScores, offset), 3);
 
-                replacementScores[pos] = scoresToUse.reduce((a, b) => a + b) / 3;
+                    replacementScores[pos] = scoresToUse.reduce((a, b) => a + b) / 3;
+                }
                 return replacementScores;
             }, {});
         });

@@ -10,6 +10,7 @@
 ### Installing the node modules ###
 
 ```npm install```
+```npm install nodemon -g```
 
 ### Loading data into the database ###
 

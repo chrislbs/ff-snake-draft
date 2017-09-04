@@ -60,6 +60,8 @@ const PositionFilter = React.createClass({
                 <option value="TE">TE</option>
                 <option value="K">K</option>
                 <option value="D">D</option>
+                <option value="LB">LB</option>
+                <option value="DL">DL</option>
                 <option value="DB">DB</option>
             </select>
         )

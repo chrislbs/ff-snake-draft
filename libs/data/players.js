@@ -14,9 +14,10 @@ function createPlayerTable(connection) {
     var stmt = `
     CREATE TABLE IF NOT EXISTS players (
         id INT NOT NULL AUTO_INCREMENT,
+        uq_id VARCHAR(50) NOT NULL,
         name VARCHAR(50) NOT NULL,
-        birthday DATE NOT NULL,
-        UNIQUE KEY (name, birthday),
+        birthday DATE,
+        UNIQUE KEY (uq_id),
         PRIMARY KEY (id))`;
     return connection.query(stmt).then( () => connection);
 }

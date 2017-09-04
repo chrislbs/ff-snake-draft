@@ -13,7 +13,9 @@ const positionOrder = {
     "K" : 5,
     "DST" : 6,
     "D" : 7,
-    "DB" : 8,
+    "LB" : 8,
+    "DL" : 9,
+    "DB" : 10,
     "BN" : 9
 };
 
@@ -25,6 +27,7 @@ function orderPositions(positions) {
 }
 
 function validPositions(positions) {
+    console.log('valid positions', Object.keys(positionOrder));;
     return _.every(positions, (pos) => positionOrder[pos] != null);
 }
 
