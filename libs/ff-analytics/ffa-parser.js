@@ -83,51 +83,6 @@ function parseRaw(rawPlayerData) {
 
     return asyncCsvParse(rawPlayerData, {columns: true})
         .then((playerProjections) => _.map(playerProjections, mapPlayerProj));
-    // csvParse(rawPlayerData, { columns : true }, (err, output) => {
-    //     console.log('Completed parsing');
-    //
-    //     // parse player name
-    //     let firstName =
-    //     callback(err, output);
-    // });
-    // try {
-    //     let lines = rawPlayerData.split('\n');
-    //     // first line is blank
-    //     lines = lines.slice(1);
-    //     // second line is headers
-    //     let headers = lines[0].split('\t');
-    //     let players = lines.slice(1);
-    //
-    //     // is defense or offense players
-    //     let fieldMap = headers.includes('FF') ? defenseFieldMap : offenseFieldMap;
-    //
-    //     let playerProjections = _.map(players, (p) => {
-    //         let projData = {};
-    //         let fieldData = p.split('\t');
-    //         _.each(headers, (h, i) => {
-    //             let fieldKey = fieldMap[h];
-    //             let fieldVal = fieldData[i].trim();
-    //
-    //             if (fieldKey != null && fieldVal != null) {
-    //
-    //                 if (fieldKey === 'position' && ['S', 'DB', 'CB'].includes(fieldVal)) {
-    //                     fieldVal = 'DB';
-    //                 }
-    //                 if (fieldKey === 'position' && ['DT', 'DE', 'DL'].includes(fieldVal)) {
-    //                     fieldVal = 'DL';
-    //                 }
-    //                 projData[fieldKey] = fieldVal;
-    //             }
-    //         });
-    //
-    //         return projData;
-    //     });
-    //     // remaining body is data
-    //     callback(null, playerProjections);
-    // }
-    // catch (ex) {
-    //     callback(ex, null);
-    // }
 }
 
 // module.exports.parseRaw = Promise.promisify(parseRaw);

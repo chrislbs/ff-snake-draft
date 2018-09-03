@@ -134,7 +134,10 @@ function buildInserts(ffProjections, loadId) {
         var projValues = _.map(_.without(Object.keys(projColMap), 'loadId', 'id'), (key) => {
             var colData = projColMap[key];
             var val = playerProj[key];
-            if(colData.isDec) {
+            if (val === 'NA') {
+                val = 'NULL';
+            }
+            else if(colData.isDec) {
                 val = parseFloat(val) || 0;
             }
             else if (colData.isInt) {

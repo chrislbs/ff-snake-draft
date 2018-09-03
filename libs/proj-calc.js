@@ -142,13 +142,20 @@ function calcPlayerProjections(scoringSettings) {
 
 function getPositionToPlayers(playerProjections) {
     return _.reduce(playerProjections, (map, playerProj) => {
-        var pos = playerProj.position;
+        let pos = playerProj.position;
         if(map[pos] == null) {
             map[pos] = [];
         }
+
+        if(pos == 'DL') {
+            map['LB'].push(playerProj)
+        }
+        if(pos == 'LB') {
+            map['DL'].push(playerProj)
+        }
         map[pos].push(playerProj);
         return map;
-    }, {});
+    }, { 'LB': [], 'DL' : []});
 }
 
 function getPositionToOrderedProjections(positionToPlayers) {

@@ -10,7 +10,8 @@ app.use((request, response, next) => {
     next()
 });
 
-app.use(bodyParser.json());
+app.use(bodyParser.text({limit: '50mb'}));
+app.use(bodyParser.json({limit: '50mb'}));
 
 app.use('/', express.static('public'));
 app.use('/api', apiRoutes);

@@ -9,6 +9,8 @@ services:
       - MYSQL_DATABASE=ff
     ports:
       - "3306:3306"
+    volumes:
+      - /home/clbs/source/me/ff-app/data:/var/lib/mysql
     healthcheck:
       test: [ "CMD-SHELL", "timeout 2 bash -c 'cat < /dev/null > /dev/tcp/127.0.0.1/3306'" ]
       interval: 10s

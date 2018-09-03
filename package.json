@@ -4,7 +4,8 @@
   "private": true,
   "author": "Chris Pounds",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "build": "node node_modules/webpack/bin/webpack.js --config webpack.config.js"
   },
   "dependencies": {
     "babel-loader": "^6.2.5",

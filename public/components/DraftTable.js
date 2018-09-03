@@ -93,7 +93,7 @@ class DataWrapper {
     }
 
     getAt(index) {
-        var actualIndex = this._indexMap[index];
+        let actualIndex = this._indexMap[index];
         return this._data.getAt(actualIndex)
     }
 }
@@ -124,13 +124,14 @@ var DraftTable = React.createClass({
         return fetch(`/api/leagues/${this.props.leagueName}/draft/allPicks`)
             .then((response) => response.json())
             .then((pickList) => {
-                var pred = function(player) {
-                    var index = _.findIndex(pickList, (pickedPlayer) => {
-                        return pickedPlayer.playerName == player.player &&
-                                pickedPlayer.teamName == player.team;
+                let pred = function(player) {
+                    let index = _.findIndex(pickList, (pickedPlayer) => {
+                        return pickedPlayer.playerName === player.player &&
+                                pickedPlayer.teamName === player.team;
+                                // pickedPlayer.position === player.position;
                     });
 
-                    return index == -1;
+                    return index === -1;
                 };
                 var newState = update(this.state, {
                     pickedPlayerPredicate : { $set : pred }
@@ -140,7 +141,8 @@ var DraftTable = React.createClass({
             .then(() => this.updateFilteredList());
     },
     componentDidMount : function() {
-        fetch(`/api/leagues/${this.props.leagueName}/projections`)
+        let headers = { 'Accept' : 'application/json' };
+        fetch(`/api/leagues/${this.props.leagueName}/projections`, { headers: headers })
             .then((response) => response.json())
             .then((players) => {
                 players = this.filterNoProjections(players);
@@ -198,7 +200,7 @@ var DraftTable = React.createClass({
         });
     },
     onPick : function(rowIndex) {
-        var player = this.state.filteredList.getAt(rowIndex);
+        let player = this.state.filteredList.getAt(rowIndex);
         fetch(`/api/leagues/${this.props.leagueName}/draft/pick`,
             {
                 method: 'POST',
@@ -218,11 +220,11 @@ var DraftTable = React.createClass({
             });
     },
     updateFilteredList : function() {
-        var dataList = this.state.players;
-        var size = dataList.getSize();
-        var filteredIndexes = [];
-        for (var index = 0; index < size; index++) {
-            var player = dataList.getAt(index);
+        let dataList = this.state.players;
+        let size = dataList.getSize();
+        let filteredIndexes = [];
+        for (let index = 0; index < size; index++) {
+            let player = dataList.getAt(index);
             if (this.state.namePredicate(player) &&
                 this.state.pickedPlayerPredicate(player) &&
                 this.state.positionPredicate(player))
@@ -236,7 +238,7 @@ var DraftTable = React.createClass({
             //}
         }
         dataList = new DataWrapper(filteredIndexes, this.state.players);
-        var newState = update(this.state, {
+        let newState = update(this.state, {
             filteredList : { $set : dataList}
         });
         this.setState(newState);

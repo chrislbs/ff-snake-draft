@@ -92,10 +92,38 @@ function filterProjections(req, projections) {
 
 router.get('/:name/projections', (req, res) => {
     return projectionCalc.getLeagueProjections(req.leagueId)
-        .then((projections) => {
-            projections = projections.sort((p1, p2) => p1.vor - p2.vor).reverse();
-            projections = filterProjections(req, projections);
-            res.send(projections)
+        .then((playerProjections) => {
+            playerProjections = playerProjections.sort((p1, p2) => p1.vor - p2.vor).reverse();
+            for(let i = 0; i < playerProjections.length; i++) {
+                playerProjections[i].overallRank = i + 1;
+            }
+            playerProjections = filterProjections(req, playerProjections);
+
+            let contentType = null;
+            let responseObject = playerProjections;
+            if(req.get('Accept') === 'application/json') {
+                contentType = 'application/json';
+            }
+            else {
+                contentType = 'text/csv';
+                let headers = ['player', 'position', 'team', 'projectedPoints', 'vor', 'overallRank'];
+
+                let allRows = [headers.join(',')];
+                let playerRows = _.map(playerProjections, (playerProj) => {
+                    return [
+                        playerProj.player,
+                        playerProj.position,
+                        playerProj.team,
+                        playerProj.projectedPoints,
+                        playerProj.vor,
+                        playerProj.overallRank
+                    ].join(',')
+                });
+
+                responseObject = allRows.concat(playerRows).join('\n')
+            }
+            res.setHeader('Content-Type', contentType);
+            res.send(responseObject);
         })
         .error((err) => res.status(500).send(err));
 });

@@ -4,13 +4,13 @@ const React = require('react'),
     LeagueSettingsNav = require('../components/LeagueSettingsNav'),
     DraftNav = require('../components/DraftNav');
 
-var Draft = React.createClass({
+let Draft = React.createClass({
     render : function() {
 
         console.log('render draft');
-        var leagueName=this.props.leagueName;
+        let leagueName=this.props.leagueName;
 
-        var childrenWithProps = React.Children.map(this.props.children,
+        let childrenWithProps = React.Children.map(this.props.children,
             (child) => {
                 return React.cloneElement(child, {
                     leagueName : leagueName

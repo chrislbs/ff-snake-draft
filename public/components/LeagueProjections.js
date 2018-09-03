@@ -38,8 +38,9 @@ var PlayersList = React.createClass({
     },
     componentDidMount : function() {
         // lol how do i this?
-        var comp = this;
-        fetch(`/api/leagues/${this.props.leagueName}/projections`)
+        let comp = this;
+        let headers = { 'Accept' : 'application/json' };
+        fetch(`/api/leagues/${this.props.leagueName}/projections`, { headers: headers })
             .then((response) => {
                 console.log(response.status);
                 if(response.status == 200) {
