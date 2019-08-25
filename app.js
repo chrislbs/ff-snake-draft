@@ -21,7 +21,7 @@ app.use((err, request, response, next) => {
     response.status(500).send('Something broke!')
 });
 
-var server = app.listen(port, (err) => {
+let server = app.listen(port, (err) => {
     if (err) {
         return console.log('something bad happened', err)
     }
