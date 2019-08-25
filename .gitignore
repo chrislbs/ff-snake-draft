@@ -27,4 +27,4 @@ public/js/bundle.min.js.map
 public/css/**/*.css
 
 # ignore mounted data volumes
-./data
+data/*

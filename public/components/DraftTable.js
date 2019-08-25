@@ -6,6 +6,17 @@ const React = require('react'),
     FixedDataTable = require('fixed-data-table'),
     { Table, Column, Cell } = FixedDataTable;
 
+function getRank(playerRank, pickedPlayers) {
+    let numAbove = _.filter(pickedPlayers, function(pp) { return playerRank > pp.actualRank }).length;
+    let numBelow = _.filter(pickedPlayers, function(pp) { return playerRank < pp.actualRank }).length;
+    let numPicked = pickedPlayers.length;
+
+
+    let ret = playerRank - (numPicked - numBelow);
+
+    return ret;
+}
+
 const DataCell = ({rowIndex, data, col}) => (
     <Cell>
         {data.getAt(rowIndex)[col]}
@@ -18,9 +29,9 @@ const NumCell = ({rowIndex, data, col}) => (
     </Cell>
 );
 
-const RankCell = ({rowIndex}) => (
+const RankCell = ({rowIndex, data, col, pickedPlayers}) => (
     <Cell>
-        {rowIndex + 1}
+        {getRank(data.getAt(rowIndex)[col], pickedPlayers)}
     </Cell>
 );
 
@@ -63,6 +74,7 @@ const PositionFilter = React.createClass({
                 <option value="LB">LB</option>
                 <option value="DL">DL</option>
                 <option value="DB">DB</option>
+                <option value="DST">DST</option>
             </select>
         )
     }
@@ -103,6 +115,7 @@ var DraftTable = React.createClass({
         return {
             players : new DataList([]),
             filteredList : new DataList([]),
+            pickedPlayers : [],
             namePredicate : this.alwaysTruePredicate,
             pickedPlayerPredicate : this.alwaysTruePredicate,
             positionPredicate : this.alwaysTruePredicate
@@ -133,6 +146,7 @@ var DraftTable = React.createClass({
 
                     return index === -1;
                 };
+
                 var newState = update(this.state, {
                     pickedPlayerPredicate : { $set : pred }
                 });
@@ -147,6 +161,9 @@ var DraftTable = React.createClass({
             .then((players) => {
                 players = this.filterNoProjections(players);
                 players = this.filterDst(players);
+                for(let i = 0; i < players.length; i++) {
+                    players[i].actualRank = i + 1;
+                }
                 var playerList = new DataList(players);
                 var newState = update(this.state, {
                     players : { $set : playerList}
@@ -223,6 +240,7 @@ var DraftTable = React.createClass({
         let dataList = this.state.players;
         let size = dataList.getSize();
         let filteredIndexes = [];
+        let pickedIndexes = [];
         for (let index = 0; index < size; index++) {
             let player = dataList.getAt(index);
             if (this.state.namePredicate(player) &&
@@ -230,6 +248,10 @@ var DraftTable = React.createClass({
                 this.state.positionPredicate(player))
             {
                 filteredIndexes.push(index);
+            }
+
+            if(!this.state.pickedPlayerPredicate(player)) {
+                pickedIndexes.push(index);
             }
             //if (this.state.namePredicate(player) &&
             //    this.state.pickedPlayerPredicate(player))
@@ -239,7 +261,9 @@ var DraftTable = React.createClass({
         }
         dataList = new DataWrapper(filteredIndexes, this.state.players);
         let newState = update(this.state, {
-            filteredList : { $set : dataList}
+            filteredList : { $set : dataList},
+            filteredIndexes : { $set : filteredIndexes },
+            pickedIndexes : { $set : pickedIndexes},
         });
         this.setState(newState);
     },
@@ -256,7 +280,18 @@ var DraftTable = React.createClass({
     },
     render : function() {
 
-        var dataList = this.state.filteredList;
+
+        let pickedIndexes = this.state.pickedIndexes;
+        let playerList = this.state.players;
+        let dataList = this.state.filteredList;
+        let pickedPlayers = [];
+        for (let i = 0; i < playerList.getSize(); i++) {
+            let player = playerList.getAt(i);
+            if(_.includes(pickedIndexes, i)) {
+                pickedPlayers.push(player);
+            }
+        }
+
         return (
             <div>
                 <input type="text" onChange={this.onPlayerFilter} placeholder="Filter by Name" />
@@ -272,7 +307,7 @@ var DraftTable = React.createClass({
                     {...this.props}>
 
                     <Column
-                        cell={<RankCell />}
+                        cell={<RankCell data={dataList} col="actualRank" pickedPlayers={pickedPlayers} />}
                         fixed={true}
                         width={50}
                         />

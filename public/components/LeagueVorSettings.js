@@ -5,7 +5,7 @@ const React = require('react'),
     _ = require('lodash');
 
 const validPositions = [
-    "QB", "RB", "WR", "TE", "K", "DL", "LB", "DB", "D"
+    "QB", "RB", "WR", "TE", "K", "DL", "LB", "DB", "D", "DST"
 ];
 
 var VorRow = React.createClass({

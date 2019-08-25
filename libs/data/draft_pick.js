@@ -19,7 +19,7 @@ function createDraftPickTable(connection) {
         team VARCHAR(10) NOT NULL,
         UNIQUE KEY (league_id, player_name, team),
         PRIMARY KEY (id))`;
-    return connection.query(stmt).then( () => connection);
+    return connection.query(stmt).then(() => connection);
 }
 
 /**
@@ -34,9 +34,9 @@ function pickPlayer(leagueId, playerName, teamName) {
     return Promise.using(db.getConnection(), createDraftPickTable)
         .then((connection) => {
             var data = {
-                player_name : playerName,
-                team : teamName,
-                league_id : leagueId
+                player_name: playerName,
+                team: teamName,
+                league_id: leagueId
             };
             return connection.query('INSERT INTO draft_pick SET ?', data);
         })
@@ -55,7 +55,7 @@ function undoLastPick(leagueId) {
             return connection.query('SELECT id FROM draft_pick ORDER BY id desc LIMIT 1')
                 .then((rows) => rows.length == 0 ? null : rows[0]['id'])
                 .then((pickId) => {
-                    if(pickId) {
+                    if (pickId) {
                         return connection.query('DELETE FROM draft_pick WHERE id= ?', pickId);
                     }
                     return null;
@@ -71,7 +71,7 @@ function undoLastPick(leagueId) {
 function getPicks(leagueId) {
     return Promise.using(db.getConnection(), createDraftPickTable)
         .then((connection) => {
-            return connection.query('SELECT * FROM draft_pick ORDER BY id desc')
+            return connection.query('SELECT * FROM draft_pick WHERE league_id = ? ORDER BY id desc', leagueId);
         })
 }
 

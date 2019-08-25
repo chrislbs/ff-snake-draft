@@ -73,7 +73,15 @@ function leagueIdMiddlware(req, res, next) {
         });
 }
 
+function nocache(req, res, next) {
+    res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+    res.header('Expires', '-1');
+    res.header('Pragma', 'no-cache');
+    next();
+}
+
 router.use('/:name', leagueIdMiddlware);
+router.use('/:name', nocache);
 router.use('/:name/rosterSettings', rosterSettings);
 router.use('/:name/scoringSettings', scoringSettings);
 router.use('/:name/vorSettings', vorSettings);
