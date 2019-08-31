@@ -16,12 +16,12 @@ const positionOrder = {
     "LB" : 8,
     "DL" : 9,
     "DB" : 10,
-    "BN" : 9
+    "BN" : 11
 };
 
 function orderPositions(positions) {
     positions.sort((lhs, rhs) => {
-        return positionOrder[lhs] > positionOrder[rhs];
+        return positionOrder[lhs] - positionOrder[rhs];
     });
     return positions;
 }

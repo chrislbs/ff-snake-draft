@@ -8,7 +8,8 @@ const express = require('express'),
     projections = require('./api/projections'),
     ff = require('./api/ffraw');
 
-// ensure no cache
+
+// ensure no cache for any api
 router.use(function (req, res, next) {
     res.set('Cache-Control', 'no-store;max-age=0');
     next()
