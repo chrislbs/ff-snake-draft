@@ -14,7 +14,7 @@ const React = require('react'),
     LeagueRoot = require('./pages/LeagueRoot'),
     ChooseLeague = require('./pages/ChooseLeague');
 
-var App = React.createClass({
+let App = React.createClass({
     render: function () {
         return (<ChooseLeague />);
     }

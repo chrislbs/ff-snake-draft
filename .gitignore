@@ -22,6 +22,7 @@ node_modules
 public/js/bundle.js
 public/js/bundle.min.js
 public/js/bundle.min.js.map
+public/js/app.js
 
 # CSS
 public/css/**/*.css
