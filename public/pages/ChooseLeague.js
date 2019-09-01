@@ -2,7 +2,7 @@
 const React = require('react'),
     fetch = require('isomorphic-fetch'),
     browserHistory = require('react-router').browserHistory,
-    FixedDataTable = require('fixed-data-table'),
+    FixedDataTable = require('fixed-data-table-2'),
     {Table, Column, Cell} = FixedDataTable;
 
 const DataCell = ({rowIndex, data, col}) => (
@@ -78,44 +78,49 @@ let ChooseLeague = React.createClass({
 
         let leagues = this.state.leagueList;
         return (
-            <div id="leagueContainer" className="u-full-width">
-                <Table
-                    width={950}
-                    rowHeight={50}
-                    headerHeight={50}
-                    maxHeight={500}
-                    rowsCount={leagues.length}>
+            <div id="leagueContainer">
+                <div className="row justify-content-center">
+                    <div className="col">
+                        <Table
+                            className="league-table"
+                            width={950}
+                            rowHeight={50}
+                            headerHeight={50}
+                            maxHeight={500}
+                            rowsCount={leagues.length}>
 
-                    <Column
-                        header={<Cell>League Id</Cell>}
-                        cell={<DataCell data={leagues} col="id"/>}
-                        fixed={true}
-                        width={100}
-                    />
-                    <Column
-                        header={<Cell>League Name</Cell>}
-                        cell={<DataCell data={leagues} col="name"/>}
-                        fixed={true}
-                        width={700}
-                    />
-                    <Column
-                        cell={<SelectCell onSelect={this.handleLeagueSelected}/>}
-                        fixed={true}
-                        width={150}
-                    />
-                </Table>
-                <div className="row">
-                    <div className="nine columns">
+                            <Column
+                                header={<Cell>League Id</Cell>}
+                                cell={<DataCell data={leagues} col="id"/>}
+                                fixed={true}
+                                width={100}
+                            />
+                            <Column
+                                header={<Cell>League Name</Cell>}
+                                cell={<DataCell data={leagues} col="name"/>}
+                                fixed={true}
+                                width={700}
+                                flexGrow={1}
+                            />
+                            <Column
+                                cell={<SelectCell onSelect={this.handleLeagueSelected}/>}
+                                fixed={true}
+                                width={150}
+                            />
+                        </Table>
+                    </div>
+                </div>
+                <div className="row justify-content-center">
+                    <div className="col">
                         <input type="text"
-                               className="u-full-width"
+                               style={{"width": "100%"}}
                                placeholder="League Name:"
                                value={this.state.league}
                                onChange={this.handleLeagueChange}/>
                     </div>
-                    <div className="three columns">
+                    <div className="col-auto-right">
                         <input type="button"
                                value="Create a New League"
-                               className="button-primary"
                                onClick={this.handleCreateNew}/>
                     </div>
                 </div>

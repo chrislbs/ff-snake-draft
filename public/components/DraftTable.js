@@ -3,7 +3,7 @@
 const React = require('react'),
     update = require('react-addons-update'),
     _ = require('lodash'),
-    FixedDataTable = require('fixed-data-table'),
+    FixedDataTable = require('fixed-data-table-2'),
     { Table, Column, Cell } = FixedDataTable;
 
 function getRank(playerRank, pickedPlayers) {

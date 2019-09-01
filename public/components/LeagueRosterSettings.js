@@ -2,7 +2,7 @@
 
 const React = require('react'),
     update = require('react-addons-update'),
-    FixedDataTable = require('fixed-data-table'),
+    FixedDataTable = require('fixed-data-table-2'),
     {Table, Column, Cell} = FixedDataTable;
 
 const validPositions = [

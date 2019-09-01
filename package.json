@@ -5,7 +5,7 @@
   "author": "Chris Pounds",
   "scripts": {
     "start": "nodemon",
-    "dev-ui" : "webpack --watch",
+    "dev-ui": "webpack --watch",
     "build": "node node_modules/webpack/bin/webpack.js --config webpack.config.js"
   },
   "main": "app.js",
@@ -27,7 +27,7 @@
     "body-parser": "^1.15.2",
     "csv-parse": "^1.1.7",
     "express": "^4.14.0",
-    "fixed-data-table": "^0.6.3",
+    "fixed-data-table-2": "^0.8.26",
     "getconfig": "2.2.0",
     "isomorphic-fetch": "^2.2.1",
     "lodash": "4.17.13",

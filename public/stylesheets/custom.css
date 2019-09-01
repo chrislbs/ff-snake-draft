@@ -1,8 +1,10 @@
 /* all */
 
-#leagueContainer div {
-    text-align: center;
-    vertical-align: middle;
+#leagueContainer {
+    width: 950px;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 #leagueNav {
@@ -27,3 +29,24 @@
     margin-top: 1em;
     margin-bottom: 1em;
 }
+
+.league-table {
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* LEAGUE POSITIONS */
+/*#leaguePositionsContent div:first-child {*/
+/*    text-align: center;*/
+/*    align-content: center;*/
+/*}*/
+
+
+/*#content .delete {*/
+/*    background-color: #FF7F7F;*/
+/*}*/
+
+/*#content .save {*/
+/*    background-color: green;*/
+/*}*/
+
