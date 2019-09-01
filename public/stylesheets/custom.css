@@ -26,6 +26,13 @@
     transform: translateX(-50%);
 }
 
+#leagueScoringSettings {
+    width: 900px;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
 #draftNav {
     text-align: left;
 }

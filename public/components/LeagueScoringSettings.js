@@ -70,51 +70,55 @@ const scoringSections = {
     }
 };
 
-var ScoringRow = React.createClass({
-    handleValueChange : function(e) {
+let ScoringRow = React.createClass({
+    handleValueChange: function (e) {
         this.props.valueChanged(this.props.scoringKey, e.target.value);
     },
-    render : function() {
+    render: function () {
         return (
-            <div>
-                <span>{this.props.scoringDesc}</span>
-                <input type="input" value={this.props.scoringValue} onChange={this.handleValueChange} />
+            <div className="row justify-content-end">
+                <span className="col">{this.props.scoringDesc}</span>
+                <span className="col-auto">
+                <input type="input" value={this.props.scoringValue}
+                       onChange={this.handleValueChange}
+                />
+                </span>
             </div>
         )
     }
 });
 
-var LeagueScoringSettings = React.createClass({
-    getInitialState : function() {
-        var scoringData = _.reduce(scoringSections, (dataMap, scoringDescs) => {
+let LeagueScoringSettings = React.createClass({
+    getInitialState: function () {
+        let scoringData = _.reduce(scoringSections, (dataMap, scoringDescs) => {
             _.forEach(scoringDescs, (desc, scoringKey) => {
                 dataMap[scoringKey] = 0;
             });
             return dataMap;
         }, {});
-        return { scoringData : scoringData };
+        return {scoringData: scoringData};
     },
-    componentDidMount : function() {
-        var comp = this;
+    componentDidMount: function () {
+        let comp = this;
         fetch(`/api/leagues/${this.props.leagueName}/scoringSettings`)
             .then((response) => response.json())
             .then((json) => {
-                var newState = update(comp.state, {
-                    scoringData : { $set : json }
+                let newState = update(comp.state, {
+                    scoringData: {$set: json}
                 });
                 comp.setState(newState);
             });
     },
-    scoringValueChanged : function(scoringKey, scoringValue) {
-        var newState = update(this.state, {
-            scoringData : {
-                [scoringKey] : { $set : scoringValue }
+    scoringValueChanged: function (scoringKey, scoringValue) {
+        let newState = update(this.state, {
+            scoringData: {
+                [scoringKey]: {$set: scoringValue}
             }
         });
         this.setState(newState);
     },
-    saveScoringData : function(e) {
-        var comp = this;
+    saveScoringData: function (e) {
+        let comp = this;
         fetch(`/api/leagues/${this.props.leagueName}/scoringSettings`,
             {
                 method: 'PUT',
@@ -126,24 +130,24 @@ var LeagueScoringSettings = React.createClass({
             })
             .then((response) => response.json())
             .then((json) => {
-                var newState = update(comp.state, {
-                    scoringData : { $set : json }
+                let newState = update(comp.state, {
+                    scoringData: {$set: json}
                 });
                 comp.setState(newState);
             });
     },
-    render : function() {
-        var sections = _.map(scoringSections, (scoringDescs, section) => {
-            var scoringRows = _.map(scoringDescs, (scoringDesc, scoringKey) => {
-                var scoringValue = this.state.scoringData[scoringKey] || 0;
+    render: function () {
+        let sections = _.map(scoringSections, (scoringDescs, section) => {
+            let scoringRows = _.map(scoringDescs, (scoringDesc, scoringKey) => {
+                let scoringValue = this.state.scoringData[scoringKey] || 0;
                 return (
                     <ScoringRow scoringKey={scoringKey} scoringDesc={scoringDesc}
                                 scoringValue={scoringValue} key={scoringKey}
-                                valueChanged={this.scoringValueChanged} />
+                                valueChanged={this.scoringValueChanged}/>
                 )
             });
             return (
-                <div key={section}>
+                <div className="leagueScoringSection" key={section}>
                     <h3>{section}</h3>
                     {scoringRows}
                 </div>
@@ -151,12 +155,12 @@ var LeagueScoringSettings = React.createClass({
         });
 
         return (
-            <div>
-                <div>
-                    {sections}
-                </div>
-                <div>
-                    <input type="button" value="Update" onClick={this.saveScoringData} />
+            <div id="leagueScoringSettings">
+                {sections}
+                <div className="row justify-content-end">
+                    <div className="col-auto">
+                        <input type="button" value="Update" onClick={this.saveScoringData}/>
+                    </div>
                 </div>
             </div>);
     }
