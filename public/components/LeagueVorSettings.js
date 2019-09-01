@@ -8,73 +8,72 @@ const validPositions = [
     "QB", "RB", "WR", "TE", "K", "DL", "LB", "DB", "D", "DST"
 ];
 
-var VorRow = React.createClass({
-    handleValueChange : function(e) {
+let VorRow = React.createClass({
+    handleValueChange: function (e) {
         this.props.valueChanged(this.props.position, e.target.value);
     },
-    render : function() {
+    render: function () {
         return (
             <div>
                 <span>{this.props.position}</span>
-                <input type="text" value={this.props.baseline} onChange={this.handleValueChange} />
+                <input type="text" value={this.props.baseline} onChange={this.handleValueChange}/>
             </div>
         )
     }
 });
 
-var LeagueVorSettings = React.createClass({
-    getInitialState : function() {
-        return { leaguePositions : [], vorBaselines : {} }
+let LeagueVorSettings = React.createClass({
+    getInitialState: function () {
+        return {leaguePositions: [], vorBaselines: {}}
     },
-    componentDidMount : function() {
-        var comp = this;
+    componentDidMount: function () {
+        let comp = this;
         fetch(`/api/leagues/${this.props.leagueName}/rosterSettings`)
             .then((response) => response.json())
             .then((json) => {
-                var leaguePositions = _.filter(
+                let leaguePositions = _.filter(
                     Array.from(new Set(json)),
                     (pos) => validPositions.includes(pos));
 
                 leaguePositions = _.map(leaguePositions, (pos) => {
-                    if(pos == 'D') {
+                    if (pos == 'D') {
                         return ['DL', 'LB'];
-                    }
-                    else {
+                    } else {
                         return pos;
                     }
                 });
 
                 leaguePositions = _.flatten(leaguePositions);
 
-                var newState = update(comp.state, {
-                    leaguePositions : { $set : leaguePositions}
+                let newState = update(comp.state, {
+                    leaguePositions: {$set: leaguePositions}
                 });
                 comp.setState(newState);
             })
             .then(() => fetch(`/api/leagues/${comp.props.leagueName}/vorSettings`))
             .then((response) => response.json())
             .then((json) => {
-                var positions = comp.state.leaguePositions;
-                var baselines = _.reduce(positions, (baselineObj, position) => {
+                let positions = comp.state.leaguePositions;
+                let baselines = _.reduce(positions, (baselineObj, position) => {
                     baselineObj[position] = json[position];
                     return baselineObj;
                 }, {});
-                var newState = update(comp.state, {
-                    vorBaselines : { $set : baselines }
+                let newState = update(comp.state, {
+                    vorBaselines: {$set: baselines}
                 });
                 comp.setState(newState);
             });
     },
-    baselineChange : function(position, baseline) {
-        var newState = update(this.state, {
-            vorBaselines : {
-                [position] : { $set : baseline }
+    baselineChange: function (position, baseline) {
+        let newState = update(this.state, {
+            vorBaselines: {
+                [position]: {$set: baseline}
             }
         });
         this.setState(newState);
     },
-    updateClicked : function(e) {
-        var comp = this;
+    updateClicked: function (e) {
+        let comp = this;
         fetch(`/api/leagues/${this.props.leagueName}/vorSettings`,
             {
                 method: 'PUT',
@@ -86,22 +85,22 @@ var LeagueVorSettings = React.createClass({
             })
             .then((response) => response.json())
             .then((json) => {
-                var newState = update(comp.state, {
-                    vorBaselines : { $set : json }
+                let newState = update(comp.state, {
+                    vorBaselines: {$set: json}
                 });
                 comp.setState(newState);
             });
     },
-    render : function() {
-        var rows = _.map(this.state.leaguePositions, (position) => {
-            var baseline = this.state.vorBaselines[position];
+    render: function () {
+        let rows = _.map(this.state.leaguePositions, (position) => {
+            let baseline = this.state.vorBaselines[position];
             return (<VorRow baseline={baseline} position={position} key={position}
-                            valueChanged={this.baselineChange} />)
+                            valueChanged={this.baselineChange}/>)
         });
         return (
             <div>
                 <div>{rows}</div>
-                <div><input type="button" value="Update" onClick={this.updateClicked} /></div>
+                <div><input type="button" value="Update" onClick={this.updateClicked}/></div>
             </div>
         );
     }
