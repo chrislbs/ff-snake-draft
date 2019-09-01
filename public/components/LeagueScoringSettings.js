@@ -139,7 +139,7 @@ let LeagueScoringSettings = React.createClass({
     render: function () {
         let sections = _.map(scoringSections, (scoringDescs, section) => {
             let scoringRows = _.map(scoringDescs, (scoringDesc, scoringKey) => {
-                let scoringValue = this.state.scoringData[scoringKey] || 0;
+                let scoringValue = this.state.scoringData[scoringKey];
                 return (
                     <ScoringRow scoringKey={scoringKey} scoringDesc={scoringDesc}
                                 scoringValue={scoringValue} key={scoringKey}
