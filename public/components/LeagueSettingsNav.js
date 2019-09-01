@@ -3,37 +3,37 @@
 const React = require('react'),
     Link = require('react-router').Link;
 
-var LeagueSettingsNav = React.createClass({
-    render : function() {
-        var league = this.props.leagueName;
-        var prefix = `/leagues/${league}/`;
-        var rosterSettings = prefix + "rosterSettings";
-        var scoringSettings = prefix + "scoringSettings";
-        var vorSettings = prefix + "vorSettings";
-        var teams = prefix + "teams";
-        var projections = prefix + "projections";
-        var draft = prefix + "draft";
+let LeagueSettingsNav = React.createClass({
+    render: function () {
+        let league = this.props.leagueName;
+        let prefix = `/leagues/${league}/`;
+        let rosterSettings = prefix + "rosterSettings";
+        let scoringSettings = prefix + "scoringSettings";
+        let vorSettings = prefix + "vorSettings";
+        let teams = prefix + "teams";
+        let projections = prefix + "projections";
+        let draft = prefix + "draft";
         return (
-            <div id="leagueNav" className="u-full-width">
-                <div>
+            <div id="leagueNav" className="row">
+                <div className="col">
                     <Link to="/" activeClassName="active">Home</Link>
                 </div>
-                <div>
+                <div className="col">
                     <Link to={rosterSettings} activeClassName="active">Roster Settings</Link>
                 </div>
-                <div>
+                <div className="col">
                     <Link to={scoringSettings} activeClassName="active">Scoring Settings</Link>
                 </div>
-                <div>
+                <div className="col">
                     <Link to={vorSettings} activeClassName="active">VOR Settings</Link>
                 </div>
-                <div>
+                <div className="col">
                     <Link to={teams} activeClassName="active">Teams</Link>
                 </div>
-                <div>
+                <div className="col">
                     <Link to={projections} activeClassName="active">Projections</Link>
                 </div>
-                <div>
+                <div className="col">
                     <Link to={draft} activeClassName="active">Draft</Link>
                 </div>
             </div>

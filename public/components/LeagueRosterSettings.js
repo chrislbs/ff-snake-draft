@@ -23,22 +23,9 @@ const RemoveCell = React.createClass({
     render: function () {
         return (
             <Cell>
-                <input className="delete" type="button" value="Remove" onClick={this.onButtonClick}/>
+                <input className="delete" type="button" value="Remove"
+                       onClick={this.onButtonClick}/>
             </Cell>
-        )
-    }
-});
-
-var PositionRow = React.createClass({
-    handleRemoveClick: function (e) {
-        this.props.remove(this.props.index);
-    },
-    render: function () {
-        return (
-            <div>
-                <span>{this.props.position}</span>
-                <input className="remove-position-btn" type="button" value="Remove" onClick={this.handleRemoveClick}/>
-            </div>
         )
     }
 });
@@ -89,46 +76,49 @@ let LeagueRosterSettings = React.createClass({
     },
     render: function () {
 
-        var positionRows = this.state.positions.map((position, index) => {
-            return (
-                <PositionRow position={position} index={index} key={index}
-                             remove={this.removePosition}/>
-            );
-        });
-
         let selections = validPositions.map((position, index) => {
             let key = 'select-' + index;
             return (<option value={position} key={key}>{position}</option>)
         });
 
         let positions = this.state.positions;
+        console.log(positions)
         return (
-            <div id="leaguePositionsContent">
-                <Table
-                    width={350}
-                    rowHeight={50}
-                    headerHeight={50}
-                    height={700}
-                    rowsCount={positions.length}
-                    {...this.props}>
-                    <Column
-                        header={<Cell>Position</Cell>}
-                        cell={<DataCell data={positions} />}
-                        fixed={true}
-                        width={200}
-                    />
-                    <Column
-                        cell={<RemoveCell onRemove={this.removePosition} />}
-                        fixed={true}
-                        width={150}
-                    />
-                </Table>
-                <div>
-                    <select onChange={this.handleSelectionChange}>
-                        {selections}
-                    </select>
-                    <input type="button" value="Add" onClick={this.handleAddPosition}/>
-                    <input className="save" type="button" value="Update" onClick={this.handleOnUpdate}/>
+            <div id="leagueRosterSettings" className="row">
+                <div className="col">
+                    <Table
+                        width={1200}
+                        rowHeight={50}
+                        headerHeight={50}
+                        height={700}
+                        rowsCount={positions.length}
+                        {...this.props}>
+                        <Column
+                            header={<Cell>Position</Cell>}
+                            cell={<DataCell data={positions}/>}
+                            fixed={true}
+                            width={1000}
+                        />
+                        <Column
+                            cell={<RemoveCell onRemove={this.removePosition}/>}
+                            fixed={true}
+                            width={200}
+                        />
+                    </Table>
+                    <div className="row justify-content-end">
+                        <div className="col-1">
+                            <select onChange={this.handleSelectionChange}>
+                                {selections}
+                            </select>
+                        </div>
+                        <div className="col-1">
+                            <input type="button" value="Add" onClick={this.handleAddPosition}/>
+                        </div>
+                        <div className="col-1">
+                            <input type="button" value="Update"
+                                   onClick={this.handleOnUpdate}/>
+                        </div>
+                    </div>
                 </div>
             </div>
         );

@@ -1,5 +1,17 @@
 /* all */
 
+#leagueWrapper {
+
+}
+
+#leagueNav {
+    max-width: 950px;
+    text-align: center;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
 #leagueContainer {
     width: 950px;
     position: relative;
@@ -7,13 +19,11 @@
     transform: translateX(-50%);
 }
 
-#leagueNav {
-    text-align: center;
-}
-
-#leagueNav div {
-    display: inline-block;
-    padding: .5em;
+#leagueRosterSettings {
+    width: 1230px;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 #draftNav {
