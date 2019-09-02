@@ -14,9 +14,13 @@ let VorRow = React.createClass({
     },
     render: function () {
         return (
-            <div>
-                <span>{this.props.position}</span>
-                <input type="text" value={this.props.baseline} onChange={this.handleValueChange}/>
+            <div className="row justify-content-end">
+                <span className="col">{this.props.position}</span>
+                <span className="col-auto">
+                    <input type="text"
+                           value={this.props.baseline}
+                           onChange={this.handleValueChange}/>
+                </span>
             </div>
         )
     }
@@ -98,9 +102,13 @@ let LeagueVorSettings = React.createClass({
                             valueChanged={this.baselineChange}/>)
         });
         return (
-            <div>
-                <div>{rows}</div>
-                <div><input type="button" value="Update" onClick={this.updateClicked}/></div>
+            <div id="leagueVorSettings">
+                {rows}
+                <div className="row justify-content-end">
+                    <div className="col-auto">
+                        <input type="button" value="Update" onClick={this.updateClicked}/>
+                    </div>
+                </div>
             </div>
         );
     }

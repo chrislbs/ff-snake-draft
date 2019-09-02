@@ -33,6 +33,13 @@
     transform: translateX(-50%);
 }
 
+#leagueVorSettings {
+    width: 400px;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
 #draftNav {
     text-align: left;
 }
