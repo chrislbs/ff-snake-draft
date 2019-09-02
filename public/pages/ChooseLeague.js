@@ -87,7 +87,7 @@ let ChooseLeague = React.createClass({
                             rowHeight={50}
                             headerHeight={50}
                             maxHeight={500}
-                            rowsCount={leagues.length}>
+                            rowsCount={leagues.length || 0}>
 
                             <Column
                                 header={<Cell>League Id</Cell>}

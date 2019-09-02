@@ -4,11 +4,15 @@ const React = require('react'),
     update = require('react-addons-update'),
     _ = require('lodash'),
     FixedDataTable = require('fixed-data-table-2'),
-    { Table, Column, Cell } = FixedDataTable;
+    {Table, Column, Cell} = FixedDataTable;
 
 function getRank(playerRank, pickedPlayers) {
-    let numAbove = _.filter(pickedPlayers, function(pp) { return playerRank > pp.actualRank }).length;
-    let numBelow = _.filter(pickedPlayers, function(pp) { return playerRank < pp.actualRank }).length;
+    let numAbove = _.filter(pickedPlayers, function (pp) {
+        return playerRank > pp.actualRank
+    }).length;
+    let numBelow = _.filter(pickedPlayers, function (pp) {
+        return playerRank < pp.actualRank
+    }).length;
     let numPicked = pickedPlayers.length;
 
 
@@ -36,32 +40,30 @@ const RankCell = ({rowIndex, data, col, pickedPlayers}) => (
 );
 
 const ButtonCell = React.createClass({
-    onButtonClick : function(e) {
+    onButtonClick: function (e) {
         this.props.onPick(this.props.rowIndex);
     },
-    render : function() {
+    render: function () {
         return (
             <Cell>
-                <input type="button" value="Pick" onClick={this.onButtonClick} />
+                <input type="button" value="Pick" onClick={this.onButtonClick}/>
             </Cell>
         )
     }
 });
 
 const PositionFilter = React.createClass({
-    handleOnChange : function(e) {
+    handleOnChange: function (e) {
         var positions = [e.target.value.trim()];
-        if(e.target.value.trim() == 'D')
-        {
-            positions = ['DL','LB'];
+        if (e.target.value.trim() == 'D') {
+            positions = ['DL', 'LB'];
         }
-        if(e.target.value.trim() == 'All')
-        {
+        if (e.target.value.trim() == 'All') {
             positions = null;
         }
         this.props.onFilterPosition(positions);
     },
-    render : function() {
+    render: function () {
         return (
             <select onChange={this.handleOnChange}>
                 <option value="All">All</option>
@@ -111,95 +113,92 @@ class DataWrapper {
 }
 
 var DraftTable = React.createClass({
-    getInitialState : function() {
+    getInitialState: function () {
         return {
-            players : new DataList([]),
-            filteredList : new DataList([]),
-            pickedPlayers : [],
-            namePredicate : this.alwaysTruePredicate,
-            pickedPlayerPredicate : this.alwaysTruePredicate,
-            positionPredicate : this.alwaysTruePredicate
+            players: new DataList([]),
+            filteredList: new DataList([]),
+            pickedPlayers: [],
+            namePredicate: this.alwaysTruePredicate,
+            pickedPlayerPredicate: this.alwaysTruePredicate,
+            positionPredicate: this.alwaysTruePredicate
         }
     },
-    notDstPredicate : function(player) {
+    notDstPredicate: function (player) {
         return player.position != 'DST';
     },
-    alwaysTruePredicate : function(player) {
+    alwaysTruePredicate: function (player) {
         return true;
     },
-    filterNoProjections : function(players) {
+    filterNoProjections: function (players) {
         return _.filter(players, (p) => p.projectedPoints > 0);
     },
-    filterDst : function(players) {
+    filterDst: function (players) {
         return _.filter(players, (p) => p.position != 'DST');
     },
-    fetchPickedPlayers : function() {
+    fetchPickedPlayers: function () {
         return fetch(`/api/leagues/${this.props.leagueName}/draft/allPicks`)
             .then((response) => response.json())
             .then((pickList) => {
-                let pred = function(player) {
+                let pred = function (player) {
                     let index = _.findIndex(pickList, (pickedPlayer) => {
                         return pickedPlayer.playerName === player.player &&
-                                pickedPlayer.teamName === player.team;
-                                // pickedPlayer.position === player.position;
+                            pickedPlayer.teamName === player.team;
+                        // pickedPlayer.position === player.position;
                     });
 
                     return index === -1;
                 };
 
                 var newState = update(this.state, {
-                    pickedPlayerPredicate : { $set : pred }
+                    pickedPlayerPredicate: {$set: pred}
                 });
                 this.setState(newState);
             })
             .then(() => this.updateFilteredList());
     },
-    componentDidMount : function() {
-        let headers = { 'Accept' : 'application/json' };
-        fetch(`/api/leagues/${this.props.leagueName}/projections`, { headers: headers })
+    componentDidMount: function () {
+        let headers = {'Accept': 'application/json'};
+        fetch(`/api/leagues/${this.props.leagueName}/projections`, {headers: headers})
             .then((response) => response.json())
             .then((players) => {
                 players = this.filterNoProjections(players);
                 players = this.filterDst(players);
-                for(let i = 0; i < players.length; i++) {
+                for (let i = 0; i < players.length; i++) {
                     players[i].actualRank = i + 1;
                 }
                 var playerList = new DataList(players);
                 var newState = update(this.state, {
-                    players : { $set : playerList}
+                    players: {$set: playerList}
                 });
                 this.setState(newState);
             })
             .then(() => this.fetchPickedPlayers());
     },
-    onPlayerFilter : function(e) {
+    onPlayerFilter: function (e) {
 
         var pred = null;
-        if(e.target.value)
-        {
+        if (e.target.value) {
             var partialName = e.target.value.toLowerCase();
-            pred = function(p) {
+            pred = function (p) {
                 return p.player.toLowerCase().indexOf(partialName) !== -1;
             };
-        }
-        else {
+        } else {
             pred = this.alwaysTruePredicate;
         }
 
         var newState = update(this.state, {
-            namePredicate : { $set : pred }
+            namePredicate: {$set: pred}
         });
-        this.setState(newState, function() {
+        this.setState(newState, function () {
             this.updateFilteredList();
         });
     },
-    onFilterPosition : function(positions) {
+    onFilterPosition: function (positions) {
         var pred;
-        if(positions == null) {
+        if (positions == null) {
             pred = this.alwaysTruePredicate;
-        }
-        else {
-            pred = function(player) {
+        } else {
+            pred = function (player) {
                 return positions.includes(player.position);
             }
         }
@@ -210,13 +209,13 @@ var DraftTable = React.createClass({
         //};
 
         var newState = update(this.state, {
-            positionPredicate : { $set : pred }
+            positionPredicate: {$set: pred}
         });
-        this.setState(newState, function() {
+        this.setState(newState, function () {
             this.updateFilteredList();
         });
     },
-    onPick : function(rowIndex) {
+    onPick: function (rowIndex) {
         let player = this.state.filteredList.getAt(rowIndex);
         fetch(`/api/leagues/${this.props.leagueName}/draft/pick`,
             {
@@ -226,8 +225,8 @@ var DraftTable = React.createClass({
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    playerName : player.player,
-                    teamName : player.team
+                    playerName: player.player,
+                    teamName: player.team
                 })
             })
             .then((response) => response.json())
@@ -236,7 +235,7 @@ var DraftTable = React.createClass({
                 return this.fetchPickedPlayers();
             });
     },
-    updateFilteredList : function() {
+    updateFilteredList: function () {
         let dataList = this.state.players;
         let size = dataList.getSize();
         let filteredIndexes = [];
@@ -245,12 +244,11 @@ var DraftTable = React.createClass({
             let player = dataList.getAt(index);
             if (this.state.namePredicate(player) &&
                 this.state.pickedPlayerPredicate(player) &&
-                this.state.positionPredicate(player))
-            {
+                this.state.positionPredicate(player)) {
                 filteredIndexes.push(index);
             }
 
-            if(!this.state.pickedPlayerPredicate(player)) {
+            if (!this.state.pickedPlayerPredicate(player)) {
                 pickedIndexes.push(index);
             }
             //if (this.state.namePredicate(player) &&
@@ -261,13 +259,13 @@ var DraftTable = React.createClass({
         }
         dataList = new DataWrapper(filteredIndexes, this.state.players);
         let newState = update(this.state, {
-            filteredList : { $set : dataList},
-            filteredIndexes : { $set : filteredIndexes },
-            pickedIndexes : { $set : pickedIndexes},
+            filteredList: {$set: dataList},
+            filteredIndexes: {$set: filteredIndexes},
+            pickedIndexes: {$set: pickedIndexes},
         });
         this.setState(newState);
     },
-    undoLastPick : function(e) {
+    undoLastPick: function (e) {
         fetch(`/api/leagues/${this.props.leagueName}/draft/undoLastPick`,
             {
                 method: 'POST',
@@ -278,7 +276,7 @@ var DraftTable = React.createClass({
             })
             .then((response) => this.fetchPickedPlayers());
     },
-    render : function() {
+    render: function () {
 
 
         let pickedIndexes = this.state.pickedIndexes;
@@ -287,64 +285,65 @@ var DraftTable = React.createClass({
         let pickedPlayers = [];
         for (let i = 0; i < playerList.getSize(); i++) {
             let player = playerList.getAt(i);
-            if(_.includes(pickedIndexes, i)) {
+            if (_.includes(pickedIndexes, i)) {
                 pickedPlayers.push(player);
             }
         }
 
         return (
-            <div>
-                <input type="text" onChange={this.onPlayerFilter} placeholder="Filter by Name" />
-                <PositionFilter onFilterPosition={this.onFilterPosition} />
-                <input type="button" onClick={this.undoLastPick} value="Undo Last" />
-                <br />
+            <div id="draftContainer">
+                <input type="text" onChange={this.onPlayerFilter} placeholder="Filter by Name"/>
+                <PositionFilter onFilterPosition={this.onFilterPosition}/>
+                <input type="button" onClick={this.undoLastPick} value="Undo Last"/>
+                <br/>
                 <Table
                     rowHeight={50}
                     headerHeight={50}
                     rowsCount={dataList.getSize()}
-                    width={950}
-                    height={600}
+                    width={1300}
+                    height={800}
                     {...this.props}>
 
                     <Column
-                        cell={<RankCell data={dataList} col="actualRank" pickedPlayers={pickedPlayers} />}
+                        cell={<RankCell data={dataList} col="actualRank"
+                                        pickedPlayers={pickedPlayers}/>}
                         fixed={true}
                         width={50}
-                        />
+                    />
                     <Column
                         header={<Cell>Player Name</Cell>}
-                        cell={<DataCell data={dataList} col="player" />}
+                        cell={<DataCell data={dataList} col="player"/>}
                         fixed={true}
                         width={200}
-                        />
+                    />
                     <Column
                         header={<Cell>Position</Cell>}
-                        cell={<DataCell data={dataList} col="position" />}
+                        cell={<DataCell data={dataList} col="position"/>}
                         fixed={true}
-                        width={150}
-                        />
+                        width={75}
+                    />
                     <Column
                         header={<Cell>Team</Cell>}
-                        cell={<DataCell data={dataList} col="team" />}
+                        cell={<DataCell data={dataList} col="team"/>}
                         fixed={true}
-                        width={150}
+                        width={75}
                     />
                     <Column
                         header={<Cell>Projected</Cell>}
-                        cell={<NumCell data={dataList} col="projectedPoints" />}
+                        cell={<NumCell data={dataList} col="projectedPoints"/>}
                         fixed={true}
                         width={125}
                     />
                     <Column
                         header={<Cell>VOR</Cell>}
-                        cell={<NumCell data={dataList} col="vor" />}
+                        cell={<NumCell data={dataList} col="vor"/>}
                         fixed={true}
                         width={125}
                     />
                     <Column
-                        cell={<ButtonCell onPick={this.onPick} />}
+                        cell={<ButtonCell onPick={this.onPick}/>}
                         fixed={true}
-                        width={150}
+                        width={100}
                     />
 
                 </Table>
