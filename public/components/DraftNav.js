@@ -3,17 +3,21 @@
 const React = require('react'),
     Link = require('react-router').Link;
 
-var DraftSettingsNav = React.createClass({
-    render : function() {
-        var league = this.props.leagueName;
-        var prefix = `/leagues/${league}/draft/`;
-        var draftOrder = prefix + "draftOrder";
-        var players = prefix + "players";
+let DraftSettingsNav = React.createClass({
+    render: function () {
+        let league = this.props.leagueName;
+        let prefix = `/leagues/${league}/draft/`;
+        let draftOrder = prefix + "draftOrder";
+        let players = prefix + "players";
         return (
-            <div id="#draftNav">
-                <div>
-                    <Link to={draftOrder} activeClassName="active">Draft Order</Link>
-                    <Link to={players} activeClassName="active">Player List</Link>
+            <div id="draftNav">
+                <div className="row justify-content-center">
+                    <div className="col">
+                        <Link to={draftOrder} activeClassName="active">Draft Order</Link>
+                    </div>
+                    <div className="col">
+                        <Link to={players} activeClassName="active">Player List</Link>
+                    </div>
                 </div>
             </div>
         )

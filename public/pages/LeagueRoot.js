@@ -18,6 +18,7 @@ let League = React.createClass({
         return (
             <div id="leagueWrapper">
                 <LeagueSettingsNav leagueName={leagueName} />
+                <hr />
                 {childrenWithProps}
             </div>
         )

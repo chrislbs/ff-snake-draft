@@ -4,40 +4,42 @@ const React = require('react'),
     update = require('react-addons-update'),
     _ = require('lodash');
 
-var TeamRow = React.createClass({
-    handleUpClick : function(e) {
+let TeamRow = React.createClass({
+    handleUpClick: function (e) {
         this.props.changeRelative(this.props.teamId, -1);
     },
-    handleDownClick : function(e) {
+    handleDownClick: function (e) {
         this.props.changeRelative(this.props.teamId, 1);
     },
-    render : function() {
+    render: function () {
         return (
-            <div key={this.props.teamId}>
-                <span>{this.props.order}</span>
-                <span>{this.props.teamName}</span>
-                <input type="button" value="Up" onClick={this.handleUpClick} />
-                <input type="button" value="Down" onClick={this.handleDownClick} />
+            <div className="row justify-content-end" key={this.props.teamId}>
+                <span className="col-1">{this.props.order}</span>
+                <span className="col-7">{this.props.teamName}</span>
+                <span className="col-auto">
+                    <input type="button" value="Up" onClick={this.handleUpClick}/>
+                    <input type="button" value="Down" onClick={this.handleDownClick}/>
+                </span>
             </div>
         )
     }
 });
 
-var DraftOrder = React.createClass({
-    getInitialState : function() {
-        return { teams : {}, order : [] }
+let DraftOrder = React.createClass({
+    getInitialState: function () {
+        return {teams: {}, order: []}
     },
-    componentDidMount : function() {
+    componentDidMount: function () {
         fetch(`/api/leagues/${this.props.leagueName}/teams`)
             .then((response) => response.json())
             .then((teamList) => {
-                var teams = _.reduce(teamList, (teamObj, team) => {
+                let teams = _.reduce(teamList, (teamObj, team) => {
                     teamObj[team.id] = team;
                     return teamObj;
                 }, {});
-                var newState = update(this.state, {
-                    teams : { $set : teams },
-                    order : { $set : Object.keys(teams) }
+                let newState = update(this.state, {
+                    teams: {$set: teams},
+                    order: {$set: Object.keys(teams)}
                 });
                 this.setState(newState);
             })
@@ -46,31 +48,31 @@ var DraftOrder = React.createClass({
             })
             .then((response) => response.json())
             .then((orderedTeamIds) => {
-                if(orderedTeamIds.length == Object.keys(this.state.teams).length) {
-                    var updatedState = update(this.state, {
-                        order : { $set : orderedTeamIds }
+                if (orderedTeamIds.length == Object.keys(this.state.teams).length) {
+                    let updatedState = update(this.state, {
+                        order: {$set: orderedTeamIds}
                     });
                     this.setState(updatedState);
                 }
             })
     },
 
-    changeRelative : function(teamId, offset) {
-        var teamOrder = this.state.order.slice();
-        var origIndex = _.findIndex(teamOrder, (id) => id == teamId);
-        var newIndex = origIndex + offset;
+    changeRelative: function (teamId, offset) {
+        let teamOrder = this.state.order.slice();
+        let origIndex = _.findIndex(teamOrder, (id) => id == teamId);
+        let newIndex = origIndex + offset;
 
-        if(newIndex > -1 && newIndex < teamOrder.length) {
-            var swapTeam = teamOrder[newIndex];
+        if (newIndex > -1 && newIndex < teamOrder.length) {
+            let swapTeam = teamOrder[newIndex];
             teamOrder[newIndex] = teamOrder[origIndex];
             teamOrder[origIndex] = swapTeam;
         }
-        var newState = update(this.state, {
-            order : { $set : teamOrder}
+        let newState = update(this.state, {
+            order: {$set: teamOrder}
         });
         this.setState(newState);
     },
-    updateClicked : function(e) {
+    updateClicked: function (e) {
         fetch(`/api/leagues/${this.props.leagueName}/draft/order`,
             {
                 method: 'PUT',
@@ -82,22 +84,26 @@ var DraftOrder = React.createClass({
             })
             .then((response) => response.json())
             .then((json) => {
-                var newState = update(this.state, {
-                    order : { $set : json }
+                let newState = update(this.state, {
+                    order: {$set: json}
                 });
                 this.setState(newState);
             });
     },
-    render : function() {
-        var rows = _.map(this.state.order, (teamId, index) => {
-            var team = this.state.teams[teamId];
+    render: function () {
+        let rows = _.map(this.state.order, (teamId, index) => {
+            let team = this.state.teams[teamId];
             return (<TeamRow teamId={team.id} teamName={team.name} key={team.id} order={index + 1}
-                             changeRelative={this.changeRelative} />)
+                             changeRelative={this.changeRelative}/>)
         });
         return (
-            <div>
-                <div>{rows}</div>
-                <div><input type="button" value="Update" onClick={this.updateClicked} /></div>
+            <div id="draftOrder">
+                {rows}
+                <div className="row justify-content-end">
+                    <div className="col-auto">
+                        <input type="button" value="Update" onClick={this.updateClicked}/>
+                    </div>
+                </div>
             </div>
         );
     }

@@ -19,11 +19,9 @@ let Draft = React.createClass({
 
         return (
             <div id="draftDiv">
-                <hr />
                 <DraftNav leagueName={leagueName}/>
-                <div>
-                    {childrenWithProps}
-                </div>
+                <hr />
+                {childrenWithProps}
             </div>
         )
     }

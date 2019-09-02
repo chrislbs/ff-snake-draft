@@ -40,13 +40,25 @@
     transform: translateX(-50%);
 }
 
-#draftNav {
-    text-align: left;
+#leagueTeams {
+    width: 500px;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
-#draftNav a {
-    display: inline-block;
-    padding: .5em;
+#draftNav {
+    width: 300px;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#draftOrder {
+    width: 800px;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 #draftDiv hr {
