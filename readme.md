@@ -1,5 +1,7 @@
 # Simple Snake Draft Application #
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/884c932a0b3e41bf991d5ab6f2d09f07)](https://www.codacy.com/app/corey_3/ff-snake-draft?utm_source=github.com&utm_medium=referral&utm_content=chrislbs/ff-snake-draft&utm_campaign=badger)
+
 ## Requirements ##
 
 - [nodejs](https://nodejs.org/en/)
